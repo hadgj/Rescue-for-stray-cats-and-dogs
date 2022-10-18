@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.mapper.MinganMapper">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="minganResultMap" type="mingan">
+        <result property="id" column="id"/>
+        <result property="str" column="str"/>
+    </resultMap>
+
+
+    <delete id="deleteByids">
+        delete from mingan where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByPageAndCondition" resultMap="minganResultMap">
+        select *
+        from mingan
+        <where>
+            <if test="mingan.str !=null and mingan.str!=''">
+                and str like #{mingan.str}
+            </if>
+        </where>
+        limit #{begin},#{size}
+    </select>
+
+    <select id="selectTotalCountByCondition" resultType="java.lang.Integer" >
+        select count(*)
+        from  mingan
+        <where>
+            <if test="str !=null and str!=''">
+                and str like #{str}
+            </if>
+        </where>
+    </select>
+</mapper>

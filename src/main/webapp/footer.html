@@ -1,0 +1,56 @@
+
+<footer id="footer">
+  <div class="footer clearfix">
+    <div class="mid clearfix" id="dibu">
+      <ul>
+        <li style="font-size:18px;" v-for="(item) in lanmusdata.slice(0,5)">
+        <a :href="'kepu.html?parentid='+item.id">{{item.lanmuli}}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="youqing clearfix">
+      <ul>
+        <li>友情链接：</li>
+        <li>宠物护理</li>
+        <li>宠物知识</li>
+        <li>宠物微群</li>
+        <li>宠物医生</li>
+        <li>基地筹粮</li>
+        <li>基地助养</li>
+        <li>基地助养</li>
+        <li>基地助养</li>
+      </ul>
+    </div>
+    <div class="gongsi clearfix">
+      <p>Copyright◎2019 Weihu Inc 渝ICP备17013170号</p>
+    </div>
+  </div>
+</footer>
+<script>
+ const dibu=new Vue({
+  el:"#dibu",
+  mounted(){
+this.lanmus();
+  },
+  methods:{
+ lanmus(){
+  var _this=this;
+  axios({
+    method: "post",
+    url: "http://localhost:9090/web-demo/LanmuServlet/selectAll"
+  }).then(function (resp) {
+    _this.lanmusdata=resp.data;
+    console.log(_this.lanmusdata)
+  })
+},
+    to(id){
+      window.open('kepu.html?parentid='+id);
+    }
+  },
+  data(){
+    return{
+     lanmusdata:[]
+    }
+  }
+})
+</script>

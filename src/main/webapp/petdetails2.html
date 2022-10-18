@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>流浪猫狗救助平台</title>
+    <!-- css files -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/petdetails.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/include.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+	<!-- Style-CSS -->
+</head>
+<body>
+    <!-- 导航栏出现 -->
+    <div id="header"></div>
+    <!-- //导航栏结束 -->
+
+    <!-- 文章详情页 -->
+    <div class="w clearfix">
+    <div id="app">
+        <div class="middle">
+            <div class="middleh">
+                宠物详情
+            </div>
+            <div class="middleb">
+                <div class="imgContainer">
+                    <!--大图-->
+                    <div class="detailImg" >
+                        <a id="detailImg-pre">&lt;</a>
+                        <div id="detailImg-box" class="box"> </div>
+                        <a id="detailImg-next">&gt;</a>
+                    </div>
+                    <!--小图-->
+                    <div class="smallImg">
+                        <a id="smallImg-pre"></a>
+                        <div id="smallImg-box" class="box">
+                            <ul id="smallImg-ul" class="imgUl">
+                            </ul>
+                        </div>
+                        <a id="smallImg-next"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="middlec">
+                <div id="menu">
+                    <!--tag标题-->
+                    <ul id="nav">
+                        <li style="width: 100%"><a href="javascript:;" class="selected">基本信息</a></li>
+                    </ul>
+                    <!--二级菜单-->
+                    <div id="menu_con">
+                        <div class="tag" style="display:block">
+                            <ul>
+                                <li>
+                                    <img  id="pettype">
+                                    <span>{{pet.petName}}</span>
+                                </li>
+                                <li>
+                                    <img src="images/性别.png" alt="">
+                                    <span>{{pet.petSex}}</span>
+                                </li>
+                                <li>
+                                    <img src="images/年龄.png" alt="">
+                                    <span>{{pet.petAge}}</span>
+                                </li>
+                                <li>
+                                    <img src="images/领养.png" alt="">
+                                    <span>{{pet.petIsApply}}</span>
+                                </li>
+                                <li>
+                                    <img src="images/地址.png" alt="">
+                                    <span>{{pet.petAddress}}</span>
+                                </li>
+                                <li>
+                                    <img src="images/简介.png" alt="">
+                                    <span>{{pet.petDsc}}</span>
+                                </li>
+                                <li>
+                                    <img src="images/联系电话.png" alt="">
+                                    <span>{{pet.otele}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- //文章详情页 -->
+
+    <!-- 网页底部 -->
+    <div id="footer"></div>
+    <!-- //网页底部 -->
+
+    <!--接收参数id，显示具体数据-->
+    <script>
+        var product_id = oneValue();
+        //接收单个值
+        function oneValue(){
+            var result;
+            var url = window.location.search;//获取url中“？”后面的字符串
+            if(url.length != -1){
+                result = url.substr(url.indexOf("=")+1);
+                console.info("result:" + result);//按浏览器F12，打印出来
+            }
+            return result;
+        }
+        const va=new Vue({
+            el: "#app",
+            mounted(){
+                this.onSubmit();
+            },
+            methods: {
+                //==================宠物管理方法========================
+                //获取当前时间，格式YYYY-MM-DD
+                getNowFormatDate() {
+                    var date = new Date();
+                    var seperator1 = "-";
+                    var year = date.getFullYear();
+                    var month = date.getMonth() + 1;
+                    var strDate = date.getDate();
+                    if (month >= 1 && month <= 9) {
+                        month = "0" + month;
+                    }
+                    if (strDate >= 0 && strDate <= 9) {
+                        strDate = "0" + strDate;
+                    }
+                    var currentdate = year + seperator1 + month + seperator1 + strDate;
+                    return currentdate;
+                },
+                // 查询方法
+                onSubmit() {
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/pet/selectByid?petID="+product_id
+                    }).then(function (resp){
+                        _this.pet=resp.data;
+                        if(_this.pet.petType=="猫猫"){
+                            $('#pettype').attr('src','images/猫猫.png')
+                        }else{
+                            $('#pettype').attr('src','images/狗狗.png')
+                        }
+                        _this.imgnames=[];
+                        _this.imgnames=_this.pet.pic.split("#");
+                        _this.imgnames.pop();
+                        _this.imgnames.forEach((item)=>{
+                            var url="/file/"+item;
+                            _this.img.push(url);
+                        })
+                        $(function(){
+                            var i=0,//大图编号
+                                len=img.length,//img数组的长度
+                                cur=0;//当前图片编号
+                            j=img.length,//默认显示小图个数
+                                page=0,//小图的页码
+                                $s_next=$('#smallImg-next'),//小图下一页
+                                $s_pre=$('#smallImg-pre'),//小图上一页
+                                box=$('#smallImg-box').width(),//显示的长度
+                                $ul=$('#smallImg-ul'),//小图外层
+                                $imgLi=$ul.find('li'),//小图li
+                                html=_html='';//存放载入的代码
+                            $('#detailImg-box').append('<a  class=\"detailImg_1\"><img  src=\"'+img[i]+'\"></a>');
+                            //大图
+                            $('#detailImg-next').click(function(){
+                                ++i;
+                                detailImg_click($s_next,i,len);
+                            })
+                            $('#detailImg-pre').click(function(){
+                                --i;
+                                detailImg_click($s_pre,i,len);
+                            })
+                            //小图
+                            for(var k=0;k<j;k++){
+                                var _k=k%len;
+                                s_html(_k);
+                                html+=h;
+                            }
+                            $ul.append(html);
+                            $('.smallImg_1').addClass('cur');
+                            //小图下一页
+                            $('#smallImg-next').click(function(){
+                                if(!$ul.is(':animated')){
+                                    page++;
+                                    var a=page*j,_a,c;
+                                    for(var k=0;k<j;k++,a++){
+                                        smallImg_click(a,_a,len,i);
+                                        _html+=h;
+                                    }
+                                    $ul.append(_html);
+                                    $ul.css({'left':0,'right':'auto'});
+                                    $ul.animate({left:-box},1600,function(){
+                                        $ul.find('li:lt('+j+')').detach();
+                                        $ul.css('left',0);
+                                        _html='';
+                                    });//动画执行后,再删除前9个li,将left设回0
+                                    $('#smallImg-ul li').click(function(){//三处一样，不知道这个要怎么优化？？？
+                                        var _this=$(this);
+                                        i=_this.attr('class').replace(/[^0-9]/ig,'')-1;
+                                        img_info(i);
+                                        s_a_r(_this,'cur');
+                                        cur=i;
+                                    })
+                                }
+                            })
+                            //小图上一页
+                            $('#smallImg-pre').click(function(){
+                                if(!$ul.is(':animated')){
+                                    page--;
+                                    var a=(page-1)*j,_a,c;
+                                    for(var k=0;k<j;k++,a--){
+                                        smallImg_click(a,_a,len,i);
+                                        _html=h+_html;
+                                    }
+                                    $ul.prepend(_html).css({'right':box,'left':'auto'});
+                                    $ul.animate({right:0},1600,function(){
+                                        $ul.find('li:gt('+(j-1)+')').detach();//删除后9个li,从8开始
+                                        _html='';
+                                    });
+                                    $('#smallImg-ul li').click(function(){
+                                        var _this=$(this);
+                                        i=_this.attr('class').replace(/[^0-9]/ig,'')-1;
+                                        img_info(i);
+                                        s_a_r(_this,'cur');
+                                        cur=i;
+                                    })
+                                }
+
+                            })
+                            //点击小图
+                            $('#smallImg-ul li').click(function(){
+                                var _this=$(this);
+                                i=_this.attr('class').replace(/[^0-9]/ig,'')-1;
+                                img_info(i);
+                                s_a_r(_this,'cur');
+                                cur=i;
+                            })
+                        })
+                        /*----自定义函数-----------*/
+                        var img=_this.img;
+                        //大图图片信息
+                        function img_info(i){
+                            var src=img[i],
+                                $main=$('#detailImg-box');
+                            $main.find('a').attr({'class':'detailImg_'+(i+1)});
+                            $main.find('img').attr({'src':src});
+                        }
+                        function s_a_r(o,c){
+                            o.addClass(c).siblings().removeClass(c);
+                        }
+                        //大图左右点击
+                        function i_cur(i,len){
+                            i=i%len;
+                            if(i<0){
+                                i=len+i;
+                            }
+                            return i;
+                        }
+                        function detailImg_click($pn,i,len){
+                            i_cur(i,len);
+                            img_info(i);
+                            var imgCur=$('.smallImg_'+(i+1));
+                            if(!imgCur.html()){
+                                $pn.click();
+                            }
+                            s_a_r($('.smallImg_'+(i+1)),'cur');//小图选中
+                        }
+                        //小图左右点击
+                        function smallImg_click(a,_a,len,i){
+                            _a=a;
+                            _a=a%len;
+                            if(_a<0){
+                                _a+=len;
+                            }
+                            c=_a==i?'cur':'';
+                            s_html(_a,c);
+                        }
+                        function s_html(_a,c){
+                            return h='<li class=\"smallImg_'+(_a+1)+' '+c+'\"><a><img  src=\"'+img[_a]+'\"></a></li>';
+                        }
+                    })
+                },
+                add(){
+                    var _this =this;
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/Regular/getUsername"
+                    }).then(function (resp){
+                        _this.apply.rtele=resp.data.tele;
+                        _this.apply.pid=_this.pet.petID;
+                        var date=_this.getNowFormatDate();
+                        _this.apply.applytime=date;
+                        _this.apply.rusername=resp.data.username;
+                        _this.apply.pname=_this.pet.petName;
+                        _this.apply.apstate=2;
+                        _this.apply.ptype=_this.pet.petType;
+                        axios({method:"post",
+                            url:"http://localhost:9090/web-demo/apply/add",
+                            data:_this.apply
+                        }).then(function(resp){
+                            if(resp.data=="success"){
+                                console.log("添加成功")
+                            }
+                        });
+                    });
+                },
+
+                //==================！！！宠物管理方法========================
+            },
+            data() {
+                return {
+                    //===============宠物管理部分需要的=============================
+                    // 品牌模型数据
+                    pet: {
+                        petID:"",
+                        petName:"",
+                        petType:"",
+                        petSex:"",
+                        petAge:"",
+                        petDsc:"",
+                        petIsApply:"",
+                        petAddress:"",
+                        pic:"",
+                        otele:""
+                    },
+                    apply:{
+                        apid:'',
+                        rtele:"",
+                        pid:'',
+                        apmessage:"",
+                        applytime:"",
+                        rusername:"",
+                        pname:"",
+                        apstate:'',
+                        ptype:""
+                    },
+                    imgnames:[],
+                    img:[]
+                    //===============！宠物管理部分需要的！=============================
+                }
+            },
+        })
+    </script>
+
+
+    <!-- 宠物信息卡片切换js代码 -->
+    <script>
+        var tabs=function(){
+            function tag(name,elem){
+                return (elem||document).getElementsByTagName(name);
+            }
+            //获得相应ID的元素
+            function id(name){
+                return document.getElementById(name);
+            }
+            function first(elem){
+                elem=elem.firstChild;
+                return elem&&elem.nodeType==1? elem:next(elem);
+            }
+            function next(elem){
+                do{
+                    elem=elem.nextSibling;
+                }while(
+                    elem&&elem.nodeType!=1
+                    )
+                return elem;
+            }
+            return {
+                set:function(elemId,tabId){
+                    var elem=tag("li",id(elemId));
+                    var tabs=tag("div",id(tabId));
+                    var listNum=elem.length;
+                    var tabNum=tabs.length;
+                    for(var i=0;i<listNum;i++){
+                        elem[i].onclick=(function(i){
+                            return function(){
+                                for(var j=0;j<tabNum;j++){
+                                    if(i==j){
+                                        tabs[j].style.display="block";
+                                        //alert(elem[j].firstChild);
+                                        elem[j].firstChild.className="selected";
+                                    }
+                                    else{
+                                        tabs[j].style.display="none";
+                                        elem[j].firstChild.className="";
+                                    }
+                                }
+                            }
+                        })(i)
+                    }
+                }
+            }
+        }();
+        tabs.set("nav","menu_con");//执行
+    </script>
+    <!-- // 宠物信息卡片切换js代码-->
+
+    <!-- js -->
+
+	<!-- Necessary-JavaScript-File-For-Bootstrap -->
+	<!-- //js -->
+
+
+
+    <!-- smoothscroll -->
+    <script src="js/SmoothScroll.min.js"></script>
+    <!-- //smoothscroll -->
+
+    <!-- start-smooth-scrolling -->
+    <script src="js/easing.js"></script>
+    <script>
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+
+                $('html,body').animate({
+                    scrollTop: $(this.hash).offset().top
+                }, 1000);
+            });
+        });
+    </script>
+    <!-- //end-smooth-scrolling -->
+
+    <!-- 导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+    <script>
+        $(window).scroll(function () {
+            if ($(window).scrollTop() >= 400) {
+                $('nav').addClass('fixed-header');
+            } else {
+                $('nav').removeClass('fixed-header');
+            }
+        });
+
+        /* scrollTop() >= 795
+           Should be equal the the height of the header
+         */
+    </script>
+    <!-- //导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+
+</body>
+</html>

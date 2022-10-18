@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <!-- css files -->
+     <link rel="stylesheet" href="css/base.css">
+     <link rel="stylesheet" href="css/common.css">
+     <link rel="stylesheet" href="css/adopt.css">
+	 <script src="js/pagination.js"></script>
+	 <link rel="stylesheet" href="css/pagination.css">
+	 <script src="js/jquery-3.3.1.js"></script>
+	 <script type="text/javascript" src="js/include.js"></script>
+	<script src="js/vue.js"></script>
+	<script src="js/axios-0.18.0.js"></script>
+</head>
+<body>
+    <!-- 导航栏出现 -->
+    <div id="header"></div>
+    <!-- 导航栏结束 -->
+
+	<div class="w clearfix">
+		<div id="app">
+		<div class="left">
+			<div>
+				<span>宠物地址</span>
+				<input  v-model="pet2.petAddress">
+			</div>
+			<div>
+				<span>宠物类型</span>
+				<select v-model="pet2.petType">
+					<option value="">请选择</option>
+					<option value="猫猫">猫猫</option>
+					<option value="狗狗">狗狗</option>
+				</select>
+			</div>
+			<div>
+				<span>宠物名字</span>
+				<input type="text" v-model="pet2.petName">
+			</div>
+			<div>
+				<button v-on:click="onSubmit1">点击筛选</button>
+			</div>
+		</div>
+		<div class="middle">
+			<div class="petshow">
+				<ul>
+					<li v-for="(pet,index) in tableData" :key="index">
+						<div class="effect-1">
+							<div class="effect-img">
+								<img :src="'/file/'+pet.pic">
+							</div>
+							<div class="effect-text">
+								<p>姓名：{{pet.petName}}</p>
+								<p>类型：{{pet.petType}}</p>
+								<p>性别：{{pet.petSex}}</p>
+								<p>年龄：{{pet.petAge}}</p>
+								<p>状态：{{pet.petIsApply}}</p>
+								<div class="effect-btn">
+									<a class="btn" href="petdetails.html" v-on:click="to(pet.petID)">了解更多</a>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="yema">
+				<div id="pages"></div>
+			</div>
+		</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+
+
+  
+
+
+    <!-- 网页底部 -->
+    <div id="footer"></div>
+	<!-- //网页底部 -->
+
+    <!-- smoothscroll -->
+	<script src="js/SmoothScroll.min.js"></script>
+	<!-- //smoothscroll -->
+
+	<!-- start-smooth-scrolling -->
+	<script src="js/easing.js"></script>
+	<script>
+		jQuery(document).ready(function ($) {
+			$(".scroll").click(function (event) {
+				event.preventDefault();
+
+				$('html,body').animate({
+					scrollTop: $(this.hash).offset().top
+				}, 1000);
+			});
+		});
+	</script>
+	<!-- //end-smooth-scrolling -->
+
+	<script>
+	const va=new Vue({
+		el: "#app",
+		mounted(){
+			this.onSubmit();
+		},
+		methods: {
+			//==================宠物管理方法========================
+			petSubmit(index){
+				var _this =this;
+				//页面加载完成之后，发送异步数据请求，查询数据
+				axios({method:"post",
+					url:"http://localhost:9090/web-demo/pet/selectByPageAndCondition?currentPage="+index+"&pageSize="+6,
+					data:_this.pet2
+				}).then(function (resp){
+					_this.tableData=resp.data.rows;
+					_this.tableData.forEach((item)=>{
+						var wz=item.pic.indexOf('#');
+						item.pic=item.pic.substring(0,wz);
+					})
+				})
+			},
+			// 查询方法
+			onSubmit() {
+				var _this =this;
+				//页面加载完成之后，发送异步数据请求，查询数据
+				axios({method:"post",
+					url:"http://localhost:9090/web-demo/pet/selectByPageAndCondition?currentPage="+1+"&pageSize="+6,
+					data:_this.pet1
+				}).then(function (resp){
+					_this.tableData=resp.data.rows;
+					_this.totalCount=resp.data.totalCount;
+					console.log(_this.totalCount)
+					new Pagination({
+						element: '#pages',
+						type: 1,
+						pageIndex: 1,
+						pageSize: 6,
+						pageCount: 5,
+						total:_this.totalCount,
+						jumper: true,
+						singlePageHide: false,
+						prevText: '上一页',
+						nextText: '下一页',
+						disabled: true,
+						currentChange: function(index) {
+							va.petSubmit(index)
+						}
+					});
+					_this.tableData.forEach((item)=>{
+						var wz=item.pic.indexOf('#');
+						item.pic=item.pic.substring(0,wz);
+					})
+				})
+			},
+			onSubmit1() {
+				var _this =this;
+				//页面加载完成之后，发送异步数据请求，查询数据
+				axios({method:"post",
+					url:"http://localhost:9090/web-demo/pet/selectByPageAndCondition?currentPage="+1+"&pageSize="+6,
+					data:_this.pet2
+				}).then(function (resp){
+					_this.tableData=resp.data.rows;
+					_this.totalCount=resp.data.totalCount;
+					new Pagination({
+						element: '#pages',
+						type: 1,
+						pageIndex: 1,
+						pageSize: 6,
+						pageCount: 5,
+						total:_this.totalCount,
+						jumper: true,
+						singlePageHide: false,
+						prevText: '上一页',
+						nextText: '下一页',
+						disabled: true,
+						currentChange: function(index) {
+							va.petSubmit(index)
+						}
+					});
+					_this.tableData.forEach((item)=>{
+						var wz=item.pic.indexOf('#');
+						item.pic=item.pic.substring(0,wz);
+					})
+				})
+			},
+			to(id){
+				window.open('petdetails.html?petID='+id);
+			}
+			//==================！！！宠物管理方法========================
+		},
+		data() {
+			return {
+				//===============宠物管理部分需要的=============================
+				// 品牌模型数据
+				pet: {
+					petID:"",
+					petName:"",
+					petType:"",
+					petSex:"",
+					petAge:"",
+					petDsc:"",
+					petIsApply:"",
+					petAddress:"",
+					pic:"",
+					otele:""
+				},
+				pet1: {
+					petID:"",
+					petName:"",
+					petType:"",
+					petSex:"",
+					petAge:"",
+					petDsc:"",
+					petIsApply:"",
+					petAddress:"",
+					pic:"",
+					otele:""
+				},
+				pet2: {
+					petID:"",
+					petName:"",
+					petType:"",
+					petSex:"",
+					petAge:"",
+					petDsc:"",
+					petIsApply:"",
+					petAddress:"",
+					pic:"",
+					otele:""
+				},
+				totalCount:'',
+				tableData:[]
+				//===============！宠物管理部分需要的！=============================
+			}
+		},
+	})
+    </script>
+
+
+    <!-- js -->
+	<script src="js/jquery-2.2.3.min.js"></script>
+	<!-- Necessary-JavaScript-File-For-Bootstrap -->
+	<!-- //js -->
+
+	
+
+    <!-- 导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+    <script>
+		$(window).scroll(function () {
+			if ($(window).scrollTop() >= 400) {
+				$('nav').addClass('fixed-header');
+			} else {
+				$('nav').removeClass('fixed-header');
+			}
+		});
+
+		/* scrollTop() >= 795
+		   Should be equal the the height of the header
+		 */
+	</script>
+    <!-- //导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+</body>
+</html>

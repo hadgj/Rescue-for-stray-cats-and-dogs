@@ -1,0 +1,107 @@
+
+/**********************************/
+/********** Effect #1 CSS *********/
+/**********************************/
+.effect-1 {
+    position: relative;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.effect-1 .effect-img {
+    font-size: 0;
+}
+
+.effect-1 .effect-img img {
+    width: 100%;
+    height: 250px;
+}
+
+.effect-1 .effect-text {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: calc(100% - 30px);
+    left: 0;
+    text-align: center;
+    background: rgba(0, 0, 0, .5);
+    transition: .5s;
+}
+
+
+.effect-1 .effect-text p{
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.effect-1:hover .effect-text {
+    top: 0;
+    
+}
+
+
+
+.effect-1 .effect-btn .btn {
+    display: inline-block;
+    height: 20px;
+    color: #333333;
+    background: #ffffff;
+    margin-top: 6px;
+}
+
+
+.w{
+    background-color: rgb(242, 242, 242);
+    width: 100%;
+}
+.left{
+    width: 18%;
+    background-color: #ffffff;
+    border-radius: 5px;
+    float: left;
+    margin-left: 38px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.left div{
+    margin: 0 auto;
+    padding: 10px 10px 10px 10px;
+}
+.left input{
+    outline: 1px solid burlywood;
+    display: inline-block;
+    width: 80%;
+}
+.left select{
+    outline: 1px solid burlywood;
+    display: inline-block;
+    width: 80%;
+}
+.left button{
+    background-color: burlywood;
+    display: inline-block;
+    width: 100px;
+    color: #FFFFFF;
+    text-align: center;
+}
+.middle{
+    width:65%;
+    background-color: #ffffff;
+    border-radius: 5px;
+    float: left;
+    margin-left: 38px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+.middle .petshow ul{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.middle .petshow li{
+width: 300px;
+}
+.yema{
+    height: 60px;
+  }

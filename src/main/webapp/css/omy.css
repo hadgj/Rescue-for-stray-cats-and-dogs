@@ -1,0 +1,198 @@
+.w{
+    background-color: rgb(242, 242, 242);
+    width: 100%;
+    padding: 20px 0;
+}
+.left{
+    float: left;
+    width: 20%;
+    margin-left: 130px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    height: 200vh;
+}
+.right{
+    float: left;
+    width: 60%;
+    margin-left: 20px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding-bottom: 100vh;
+}
+.left  ul li{
+    height: 60px;
+    line-height: 60px;
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+}
+ .current{
+border-left: 3px solid rgb(222, 184, 135);
+color:rgb(222, 184, 135) ;
+background-color: rgb(222, 184, 135,0.2) ;
+}
+.get-menu a{
+    display: inline-block;
+    font-size: 15px;
+    height: 40px;
+}
+.get-menu a:last-child{
+    color: rgb(222, 184, 135);
+}
+.get-menu span{
+    display: inline-block;
+    height: 40px;
+}
+ .content .menu1{
+    display: none;
+}
+ .content .menu2{
+    display: none;
+}
+ .content .menu3{
+    display: none;
+}
+.content .menu4{
+    display: none;
+}
+.content .menu5{
+    display: none;
+}
+
+.content .menu6{
+    display: none;
+}
+.content .menu7{
+    display: none;
+}
+.content .menu8{
+    display: none;
+}
+.content .menu9{
+    display: none;
+}
+.content .active{
+    display: block;
+}
+.tou{
+    width: 100%;
+    height: 155px;
+    position: relative;
+    margin-bottom: 10px;
+}
+.tou span{
+    position: absolute;
+    display: inline-block;
+    color: #ffffff;
+    background-color:rgb(222, 184, 135) ;
+    font-size: 15px;
+   bottom:5%;
+   right: 30%;
+   width: 30px;
+   text-align: center;
+}
+.tou img{
+    display: block;
+    height: 150px;
+    width: 150px;
+    border-radius: 75px;
+    margin: 10px auto;
+}
+
+.gerenh{
+    width: 90%;
+    margin: 0 auto;
+}
+.gerenb{
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+}
+.gerenhl{
+float: left;
+width: 15%;
+height: 45px;
+border-bottom: 3px solid rgb(222, 184, 135);
+line-height: 45px;
+text-align: center;
+}
+.gerenhl p{
+    font-size: 20px;
+    color: black;
+}
+.gerenr{
+float: left;
+width: 85%;
+height: 45px;
+border-bottom: 3px solid #ccc;
+}
+input{
+    outline: 1px solid rgb(222, 184, 135);
+    width: 200px;
+    height: 25px;
+}
+select{
+    outline: 1px solid rgb(222, 184, 135);
+    width: 200px;
+    height: 25px;
+    border:none;
+}
+.gerenb span{
+    font-size: 18px;
+    display: inline-block;
+    width:80px;
+    text-align: justify;
+    text-justify: distribute-all-lines;
+    text-align-last: justify;
+    margin-right: 20px;
+}
+.gerenb form div{
+    margin-top: 15px;
+}
+textarea{
+    border: none;
+    width: 200px;
+    height: 150px;
+    outline: 1px solid rgb(222, 184, 135);
+    vertical-align: top;
+}
+.mima span{
+    width: 150px;
+}
+.tousu span{
+    width: 200px;
+}
+button{
+    outline: 1px solid rgb(222, 184, 135);
+    background-color:rgb(222, 184, 135); 
+    color: #ffffff;
+    width: 100px;
+    height: 30px;
+    font-size: 16px;
+}
+.gerenb table{
+    width: 100%;
+    border-collapse: collapse;
+}
+th,td{
+    border: 1px solid #999;
+    text-align: center;
+    padding: 20px 0;
+}
+
+table thead tr{
+    background-color: rgb(222, 184, 135);
+    color: #fff;
+}
+
+table tbody tr:nth-child(odd){
+    background-color: #eee;
+}
+
+table tbody tr:hover{
+    background-color: #ccc;
+}
+
+table tbody tr td:first-child{
+    color: #f40;
+}

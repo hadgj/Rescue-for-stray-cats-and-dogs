@@ -1,0 +1,41 @@
+<script>
+        $(function () {
+            //查询用户信息
+            $.get("Regular/getUsername", {}, function (data) {
+                var msg=data.username;
+                $("#span_username").html("普通用户");
+                $("#shenfen").html('<a href="my.html">个人中心</a>');
+                $("#st").html('<a href="publishhelp.html">发布求助</a>')
+                if(msg==null){
+                    $.get("organization/getUsername", {}, function (data) {
+                        var msg=data.username;
+                        $("#span_username").html("救助机构");
+                        $("#shenfen").html('<a href="omy.html">机构中心</a>');
+                        $("#st").html('<a href="publishpet.html">发布宠物</a>')
+                    })
+                }
+            })
+        });
+</script>
+<header id="header">
+    <div class="nav-links">
+        <nav>
+            <span class="logo">流浪猫狗救助平台</span>
+            <ul>
+                <li><a href="index.html" class="scroll">首页</a></li>
+                <li><a href="help.html">求助广场</a></li>
+                <li><a href="adopt.html">领养中心</a></li>
+                <li id="st"></li>
+                <li><a href="article.html">猫狗知识</a></li>
+                <li id="shenfen"></li>
+                <li><a href="search.html"><img src="images/搜索.png" style="vertical-align:center;width: 30px;height: 30px;"></a></li>
+            </ul>
+                <!-- 登录状态  -->
+                <div class="login">
+                    <span id="span_username"></span>
+                    <a href="javascript:location.href='/web-demo/exitServlet';"> | 退出</a>
+                </div>
+        </nav>
+        <div class="clearfix"></div>
+    </div>
+</header>

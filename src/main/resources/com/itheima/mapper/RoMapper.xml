@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.mapper.RoMapper">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="roResultMap" type="ro">
+        <result property="bstatus" column="bstatus" />
+        <result property="btele" column="btele" />
+    </resultMap>
+
+    <delete id="deleteByids">
+        delete  from ro where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByPageAndCondition" resultMap="roResultMap">
+        select *
+        from ro
+        <where>
+            <if test="ro.bstatus !=null and ro.bstatus!=''">
+                and bstatus = #{ro.bstatus}
+            </if>
+            <if test="ro.btele !=null and ro.btele!=''">
+                and btele = #{ro.btele}
+            </if>
+        </where>
+        limit #{begin},#{size}
+    </select>
+
+    <select id="selectTotalCountByCondition" resultType="java.lang.Integer" >
+        select count(*)
+        from  ro
+        <where>
+            <if test="bstatus !=null and bstatus!=''">
+                and bstatus = #{bstatus}
+            </if>
+
+            <if test="btele !=null and btele!=''">
+                and btele = #{btele}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流浪猫狗救助平台</title>
+    <!-- css files -->
+    <link rel="stylesheet" href="css/index.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/font-awesome.css" type="text/css" media="all">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/jquery-2.2.3.min.js"></script>
+    <script type="text/javascript" src="js/include.js"></script>
+    <script src="js/Choices.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+</head>
+<body>
+     <!-- 导航栏出现 -->
+     <div id="header"></div>
+     <!-- 导航栏结束 -->
+
+    <!-- 网站首部 -->
+    <!-- Slider -->
+    <div class="w3l-main" id="home">
+		<!-- Slider -->
+		<div class="slider">
+			<div class="callbacks_container">
+				<ul class="rslides" id="slider">
+					<li>
+						<div class="slider-img-w3layouts one">
+							<div class="w3l-overlay">
+								<div class="container">
+									<div class="banner-text-info">
+										<h3>欢迎来到
+											<span>流浪猫狗</span>
+											<span>救助</span>平台！</h3>
+										<p>当我研究比较了所谓的低等动物和我们人类之间的各种特征及性格之后，我发现我的结论是令人汗颜的。
+											</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="slider-img-w3layouts two">
+							<div class="w3l-overlay">
+								<div class="container">
+									<div class="banner-text-info">
+										<h3>你可以
+											<span>发布求助</span>向平台的
+											<span>救助机构</span>！</h3>
+										<p>挖掘我们心灵深处的慈悲，拥抱万物生灵，接受整个大自然及其美丽之处，这样我们就可以完成我们释放自身的使命。
+											</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="slider-img-w3layouts three">
+							<div class="w3l-overlay">
+								<div class="container">
+									<div class="banner-text-info">
+										<h3>你可以
+											<span>领养</span>得到救助的健康
+											<span>萌宠</span>！</h3>
+										<p>如果我们了解狗真正的本性，并且知道如何鼓励它们，我们就能成为更好的主人。
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li>
+						<div class="slider-img-w3layouts four">
+							<div class="w3l-overlay">
+								<div class="container">
+									<div class="banner-text-info">
+										<h3>你可以了解
+											<span>救助和护理</span>流浪猫狗的
+											<span>必备知识</span>！</h3>
+										<p>我对人权和动物权益一样重视, 这也应是全体人类该有的共识。
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+		<!--//Slider-->
+	</div>
+    <!--//Slider-->
+    <!-- //网站首部 -->
+
+    <!-- 领养萌宠 -->
+    <div class="about" id="about">
+    <div class="container">
+        <h3 class="agile-title">萌宠展示</h3>
+        <div class="one" v-for="(item,index) in mengchongdata">
+            <div class="ih-item circle effect1 agile_services_grid">
+                <div class="spinner"></div>
+                <div class="img">
+                    <img :src="'/file/'+item.pic" alt=" " class="img-responsive" />
+                </div>
+                <fieldset>
+                    <legend>姓名：{{item.petName}}</legend>
+                        <span>类型：{{item.petType}}</span><br>
+                        <span>性别：{{item.petSex}}</span><br>
+                        <span>年龄：{{item.petAge}}</span><br>
+                        <span>状态：{{item.petIsApply}}</span>
+                </fieldset>
+            </div>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+    <div class="clearfix"> </div>
+    </div>
+    <!-- //领养萌宠 -->
+
+    <!-- 过渡板块 -->
+	<div class="middle-w3l">
+		<div class="container">
+			<h2>救助原则：在力所能及的情况下救助，这包含两个方面，即有意救助，但不超过自身能力范围。</h2>
+		</div>
+        <div class="clearfix"> </div>
+	</div>
+    <!-- //过度板块 -->
+
+
+     <!-- 热点文章 -->
+     <div class="article" id="article">
+     <div class="container">
+        <div class="Choices">
+            <div class="Choices_text">
+                <div class="Choices_head">热点文章</div>
+                <div class="Choices_content">
+                    <div class="Choicesnext"><img src="images/Choicesnext.png" width="100%"></div>
+                    <div class="Choices_banner">
+                        <ul>
+                            <li v-for="(item) in wenzhangdata">
+                                <div class="Choices_left"><img :src="'/file/'+item.newsImagePath" style="height:100%;width:100%;"></div>
+                                <div class="Choices_right">
+                                    <h1>{{item.newsTitle}}</h1>
+                                    <p>{{item.newsContent}}</p>
+                                    <div class="Choicesbut"><a style="color:#666666;" v-on:click="to(item.newsID)">点击了解更多</a></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="Choicestel">
+                        <ul>
+                            <li v-for="(item,index) in wenzhangdata">{{'0'+(index+1)}}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+     </div>
+     <!-- //热点文章 -->
+
+     <!-- 照片墙 -->
+     <div id="gallery" class="gallery">
+     <div class="container">
+        <h3 class="agile-title">犬猫书籍</h3>
+     </div>
+    <div class="agileinfo-gallery-row" id="shuji">
+        <div class="photo" v-for="(item) in shujidata">
+            <a :href="'upload/'+item.itempic" >
+                <img :src="'upload/'+item.itempic"  :title="item.itemques" />
+            </a>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+    <div class="clearfix"> </div>
+     </div>
+     <!-- //照片墙 -->
+
+
+      <!-- 网页底部 -->
+      <div id="footer"></div>
+      <!-- //网页底部 -->
+
+
+	<!-- smoothscroll -->
+	<script src="js/SmoothScroll.min.js"></script>
+	<!-- //smoothscroll -->
+
+	<!-- start-smooth-scrolling -->
+	<script src="js/easing.js"></script>
+	<script>
+		jQuery(document).ready(function ($) {
+			$(".scroll").click(function (event) {
+				event.preventDefault();
+
+				$('html,body').animate({
+					scrollTop: $(this.hash).offset().top
+				}, 1000);
+			});
+		});
+	</script>
+	<!-- //end-smooth-scrolling -->
+
+
+
+    <!-- js -->
+     <script>
+         const redian=new Vue({
+             el:"#article",
+             mounted(){
+                 this.wenzhangs();
+             },
+             methods:{
+                 wenzhangs(){
+                     var _this=this;
+                     axios({
+                         method: "post",
+                         url: "http://localhost:9090/web-demo/news/topfive"
+                     }).then(function (resp) {
+                         _this.wenzhangdata=resp.data;
+                         _this.wenzhangdata.forEach((item)=>{
+                             var wz=item.newsImagePath.indexOf('#');
+                             item.newsImagePath=item.newsImagePath.substring(0,wz);
+                         })
+                     })
+                 },
+                 to(id){
+                     window.open('newsdetails.html?parentid='+id);
+                 }
+             },
+             data(){
+                 return{
+                     wenzhangdata:[]
+                 }
+             }
+         })
+         const mengchong=new Vue({
+             el:"#about",
+             mounted(){
+                 this.mengchongs();
+             },
+             methods:{
+                 mengchongs(){
+                     var _this=this;
+                     axios({
+                         method: "post",
+                         url: "http://localhost:9090/web-demo/pet/petfour"
+                     }).then(function (resp) {
+                         _this.mengchongdata=resp.data;
+                         _this.mengchongdata.forEach((item)=>{
+                             var wz=item.pic.indexOf('#');
+                             item.pic=item.pic.substring(0,wz);
+                         })
+                     })
+                 },
+                 to(id){
+                     window.open('petdetails.html?parentid='+id);
+                 }
+             },
+             data(){
+                 return{
+                     mengchongdata:[]
+                 }
+             }
+         })
+         const shuji=new Vue({
+             el:"#shuji",
+             mounted(){
+                 this.shujis();
+             },
+             methods:{
+                 shujis(){
+                     var _this=this;
+                     axios({
+                         method: "post",
+                         url: "http://localhost:9090/web-demo/LanmuliitemServlet/selectByParentid?parentid="+35
+                     }).then(function (resp) {
+                         _this.shujidata=resp.data;
+                         $('.agileinfo-gallery-row a').simpleLightbox({
+                             navText: ['&lsaquo;', '&rsaquo;']
+                         });
+                     })
+                 }
+             },
+             data(){
+                 return{
+                     shujidata:[]
+                 }
+             }
+         })
+     </script>
+	<!-- //js -->
+
+	<!-- Banner Slider -->
+	<script src="js/responsiveslides.min.js"></script>
+	<script>
+		$(function () {
+			$("#slider").responsiveSlides({
+				auto: true,
+				pager: true,
+				nav: true,
+				speed: 1000,
+				namespace: "callbacks",
+				before: function () {
+					$('.events').append("<li>before event fired.</li>");
+				},
+				after: function () {
+					$('.events').append("<li>after event fired.</li>");
+				}
+			});
+		});
+	</script>
+	<!-- //Banner Slider -->
+
+    <!-- 导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+    <script>
+		$(window).scroll(function () {
+			if ($(window).scrollTop() >= 600) {
+				$('nav').addClass('fixed-header');
+			} else {
+				$('nav').removeClass('fixed-header');
+			}
+		});
+
+		/* scrollTop() >= 795
+		   Should be equal the the height of the header
+		 */
+	</script>
+    <!-- //导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+
+    <!-- 猫狗圈图片展示 -->
+	<script src="js/simple-lightbox.min.js"></script>
+<!--
+	<script>
+		$(function () {
+			var gallery = $('.agileinfo-gallery-row a').simpleLightbox({
+				navText: ['&lsaquo;', '&rsaquo;']
+			});
+		});
+	</script>-->
+	<link href='css/simplelightbox.min.css' rel='stylesheet' type='text/css'>
+	<!-- //猫狗圈图片展示 -->
+</body>
+</html>

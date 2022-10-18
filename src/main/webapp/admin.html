@@ -1,0 +1,2689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="css/img.css">
+    <!-- 切换板块需要的css文件，layui-->
+    <link rel="stylesheet" href="layui-v2.6.8/layui/css/layui.css">
+    <title>流浪猫狗救助管理系统</title>
+    <style>
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+<!--    头像上传板块的样式代码-->
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+<ul class="layui-nav" lay-bar="disabled">
+    <li class="layui-nav-item" lay-unselect="">
+        <a href="javascript:;"><img src="/file/g2.jpg" class="layui-nav-img"></a>
+        <dl class="layui-nav-child">
+            <dd ><a href="javascript:;" >修改密码</a></dd>
+            <hr>
+            <dd style="text-align: center;"><a href="index.html">退出</a></dd>
+        </dl>
+    </li>
+</ul>
+
+<!--2.切换板块-->
+<div class="layui-tab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">文章管理</li>
+        <li>宠物管理</li>
+        <li>领养管理</li>
+        <li>普通用户管理</li>
+        <li>救助机构审核</li>
+        <li>个人信息</li>
+        <li>求助帖管理</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div id="app1">
+                <template>
+                <!--搜索表单-->
+                <el-form :inline="true" :model="news1" class="demo-form-inline">
+                    <el-form-item label="文章标题">
+                        <el-input v-model="news1.newsTitle" placeholder="文章标题"></el-input>
+                    </el-form-item>
+                    <el-form-item label="发布日期">
+                        <el-date-picker
+                                v-model="news1.newsDate"
+                                type="date"
+                                placeholder="选择日期"
+                                value-format="yyyy-MM-dd" >
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="newssubmit">查询</el-button>
+                    </el-form-item>
+                </el-form>
+                <!--文章管理板块按钮-->
+                <el-row>
+
+                    <el-button type="danger" plain @click="deletenewsByids">批量删除</el-button>
+                    <el-button type="primary" plain @click="add">新增</el-button>
+                </el-row>
+                <!--添加文章对话框-->
+                <el-dialog
+                        title="添加文章"
+                        :visible.sync="newsaddVisible"
+                        width="30%"
+                >
+                    <el-form ref="form" :model="news2" label-width="80px">
+                        <el-form-item label="文章标题">
+                            <el-input v-model="news2.newsTitle"></el-input>
+                        </el-form-item>
+                        <el-form-item label="文章内容">
+                            <el-input
+                                    type="textarea"
+                                    autosize
+                                    v-model="news2.newsContent">
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="发布日期">
+                            <el-date-picker
+                                    v-model="news2.newsDate"
+                                    type="date"
+                                    placeholder="选择日期"
+                                    value-format="yyyy-MM-dd" >
+                            </el-date-picker>
+                        </el-form-item>
+
+                        <el-form-item label="文章封图">
+                            <el-upload
+                                    class="upload-demo"
+                                    multiple
+                                    ref="upload"
+                                    :file-list="newsimgfileList"
+                                    :auto-upload="false"
+                                    action="#"
+                                    accept=".jpg,.jpeg,.gif,.bmp,.png"
+                            >
+                                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                            </el-upload>
+                        </el-form-item>
+
+                        <el-form-item label="是否置顶">
+                            <el-select v-model="news2.newsIsTop" >
+                                <el-option label="否" value='0'></el-option>
+                                <el-option label="是" value='1'></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="点赞数">
+                            <el-input v-model="news2.newsZan"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="xinzengnews">确认</el-button>
+                            <el-button @click="newsaddVisible = false">取消</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                </el-dialog>
+                <!--编辑文章对话框-->
+                <el-dialog
+                        title="编辑文章"
+                        :visible.sync="newseditVisible"
+                        width="30%"
+                >
+                    <el-form ref="form" :model="news3" label-width="80px">
+                        <el-form-item label="文章标题">
+                            <el-input v-model="news3.newsTitle"></el-input>
+                        </el-form-item>
+                        <el-form-item label="文章内容">
+                            <el-input
+                                    type="textarea"
+                                    autosize
+                                    v-model="news3.newsContent">
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="发布日期">
+                            <el-date-picker
+                                    v-model="news3.newsDate"
+                                    type="date"
+                                    placeholder="选择日期"
+                                    value-format="yyyy-MM-dd" >
+                            </el-date-picker>
+                        </el-form-item>
+
+                        <el-form-item label="文章封图">
+                            <el-upload
+                                    class="upload-demo"
+                                    multiple
+                                    ref="upload"
+                                    :file-list="newsimgfileList"
+                                    :auto-upload="false"
+                                    action="#"
+                                    accept=".jpg,.jpeg,.gif,.bmp,.png"
+                                    :on-remove="handleRemove"
+                            >
+                                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                            </el-upload>
+                        </el-form-item>
+
+                        <el-form-item label="是否置顶">
+                            <el-select v-model="news3.newsIsTop" >
+                                <el-option label="否" value='0'></el-option>
+                                <el-option label="是" value='1'></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="点赞数">
+                            <el-input v-model="news3.newsZan"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="editnews">确认</el-button>
+                            <el-button @click="newseditVisible = false">取消</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                </el-dialog>
+                <!--新闻展示面板-->
+                <el-dialog title="文章内容" :visible.sync="newscontentVisible"
+                >
+                    <el-input
+                            type="textarea"
+                            autosize
+                            v-model="newscontent">
+                    </el-input>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="newscontentVisible = false">收起</el-button>
+                    </div>
+                </el-dialog>
+                <!--新闻封图展示面板-->
+                <el-dialog title="文章封图" :visible.sync="newsimgVisible"
+                >
+                    <el-image
+                            v-for="(item, index) in newsimgsurl"
+                            :key="index"
+                            style="width: 100px; height: 100px;margin-right: 10px;"
+                            :src="item"
+                            :preview-src-list="[item]"
+                    ></el-image>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="newsimgVisible = false">收起</el-button>
+                    </div>
+                </el-dialog>
+                <!--表格-->
+                <template>
+                    <el-table
+                            :data="newstableData"
+                            style="width: 100%"
+                            :row-class-name="tableRowClassName"
+                            @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                                type="selection"
+                                width="55">
+                        </el-table-column>
+                        <el-table-column
+                                prop="newsID"
+                                label="ID"
+                                align="center"
+                                width="55">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="newsTitle"
+                                label="标题"
+                                align="center"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                label="内容"
+                                align="center">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="newsxiangqing(scope.row.newsContent)">详情</el-button>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="newsDate"
+                                align="center"
+                                type
+                                label="发布日期">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="封图">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="newsimg(scope.row.newsImagePath)">预览</el-button>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="newsIsTop"
+                                align="center"
+                                label="置顶">
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.newsIsTop===0">否</span>
+                                <span v-else-if="scope.row.newsIsTop===1">是</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="newsZan"
+                                align="center"
+                                label="获赞数">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="操作"
+                                width="200" >
+                            <template slot-scope="scope">
+                                <el-row>
+                                    <el-button type="primary" @click="edit(scope.row)">编辑</el-button>
+                                    <el-button type="danger" plain @click="deletenewsByid(scope.row.newsID)">删除</el-button>
+                                </el-row>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+                <!--分页工具条-->
+                <el-pagination
+                        @size-change="newshandleSizeChange"
+                        @current-change="newshandleCurrentChange"
+                        :current-page="newscurrentPage"
+                        :page-sizes="[5, 10, 15, 20]"
+                        :page-size="5"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="newstotalCount">
+                </el-pagination>
+            </template>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <div id="app">
+                <!--搜索表单-->
+                <el-form :inline="true" :model="pet1" class="demo-form-inline">
+
+                    <el-form-item label="当前状态">
+                        <el-select v-model="pet1.petIsApply" clearable placeholder="请选择">
+                            <el-option label="未领养" value="未领养"></el-option>
+                            <el-option label="已领养" value="已领养"></el-option>
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="宠物名字">
+                        <el-input v-model="pet1.petName" placeholder="宠物名字"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="宠物类型">
+                        <el-select v-model="pet1.petType" clearable placeholder="请选择">
+                            <el-option label="猫猫" value="猫猫"></el-option>
+                            <el-option label="狗狗" value="狗狗"></el-option>
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="宠物地址">
+                        <el-input v-model="pet1.petAddress" placeholder="宠物地址"></el-input>
+                    </el-form-item>
+
+                    <el-form-item>
+                        <el-button type="primary" @click="onsubmit">查询</el-button>
+                    </el-form-item>
+                </el-form>
+                <!--按钮-->
+                <el-row>
+                    <el-button type="danger" plain @click="deleteByids">批量删除</el-button>
+                    <el-button type="primary" plain @click="add">新增</el-button>
+                </el-row>
+                <!--宠物图片展示-->
+                <el-dialog title="宠物图片" :visible.sync="imgdialogVisible"
+                >
+                    <el-image
+                            v-for="(item, index) in imgsurl"
+                            :key="index"
+                            style="width: 100px; height: 100px;margin-right: 10px;"
+                            :src="item"
+                            :preview-src-list="[item]"
+                    ></el-image>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="imgdialogVisible= false">收起</el-button>
+                    </div>
+                </el-dialog>
+                <!--编辑-->
+                <el-dialog
+                        title="编辑宠物信息"
+                        :visible.sync="editdialogVisible"
+                        width="30%"
+                >
+                    <el-form ref="form" :model="pet2" label-width="80px">
+                        <el-form-item label="宠物名字">
+                            <el-input v-model="pet2.petName"></el-input>
+                        </el-form-item>
+                        <el-form-item label="宠物类型">
+                            <el-select v-model="pet2.petType" placeholder="请选择">
+                                <el-option value="猫猫">猫猫</el-option>
+                                <el-option value="狗狗">狗狗</el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="宠物性别">
+                            <el-select v-model="pet2.petSex" placeholder="请选择">
+                                <el-option value="小哥哥">小哥哥</el-option>
+                                <el-option value="小姐姐">小姐姐</el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="宠物年龄">
+                            <el-input v-model="pet2.petAge"></el-input>
+                        </el-form-item>
+                        <el-form-item label="宠物介绍">
+                            <el-input
+                                    type="textarea"
+                                    autosize
+                                    v-model="pet2.petDsc">
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="领养状态">
+                            <el-select v-model="pet2.petIsApply" placeholder="请选择">
+                                <el-option value="未领养">未领养</el-option>
+                                <el-option value="已领养">已领养</el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="宠物地址">
+                            <el-input v-model="pet2.petAddress"></el-input>
+                        </el-form-item>
+                        <el-form-item label="宠物图片">
+                            <el-upload
+                                    class="upload-demo"
+                                    multiple
+                                    ref="upload"
+                                    :file-list="fileList"
+                                    :auto-upload="false"
+                                    action="#"
+                                    accept=".jpg,.jpeg,.gif,.bmp,.png"
+                            >
+                                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="联系电话">
+                            <el-input v-model="pet2.otele"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="editpet">确认</el-button>
+                            <el-button @click="editdialogVisible = false">取消</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                </el-dialog>
+                <!--新增-->
+                <el-dialog
+                        title="添加宠物数据"
+                        :visible.sync="dialogVisible"
+                        width="30%"
+                >
+                    <el-form ref="form" :model="pet" label-width="80px">
+                        <el-form-item label="宠物名字">
+                            <el-input v-model="pet.petName"></el-input>
+                        </el-form-item>
+                        <el-form-item label="宠物类型">
+                            <el-select v-model="pet.petType" placeholder="请选择">
+                                <el-option value="猫猫">猫猫</el-option>
+                                <el-option value="狗狗">狗狗</el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="宠物性别">
+                            <el-select v-model="pet.petSex" placeholder="请选择">
+                                <el-option value="小哥哥">小哥哥</el-option>
+                                <el-option value="小姐姐">小姐姐</el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="宠物年龄">
+                            <el-input v-model="pet.petAge"></el-input>
+                        </el-form-item>
+                        <el-form-item label="宠物介绍">
+                            <el-input
+                                    type="textarea"
+                                    autosize
+                                    v-model="pet.petDsc">
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item label="领养状态">
+                            <el-select v-model="pet.petIsApply" placeholder="请选择">
+                                <el-option value="未领养">未领养</el-option>
+                                <el-option value="已领养">已领养</el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="宠物地址">
+                            <el-input v-model="pet.petAddress"></el-input>
+                        </el-form-item>
+                        <el-form-item label="宠物图片">
+                            <el-upload
+                                    class="upload-demo"
+                                    multiple
+                                    ref="upload"
+                                    :file-list="fileList"
+                                    :auto-upload="false"
+                                    action="#"
+                                    accept=".jpg,.jpeg,.gif,.bmp,.png"
+                            >
+                                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="联系电话">
+                            <el-input v-model="pet.otele"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="addpet">确认</el-button>
+                            <el-button @click="dialogVisible = false">取消</el-button>
+                        </el-form-item>
+                    </el-form>
+
+                </el-dialog>
+                <!--表格-->
+                <template>
+                    <el-table
+                            :data="tableData"
+                            style="width: 100%"
+                            :row-class-name="tableRowClassName"
+                            @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                                type="selection"
+                                width="55">
+                        </el-table-column>
+                        <el-table-column
+                                prop="petID"
+                                label="ID"
+                                align="center"
+                                width="55">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="petName"
+                                label="名字"
+                                align="center"
+                                width="85"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="petType"
+                                label="类型"
+                                align="center"
+                                width="55"
+                        >
+                        </el-table-column>
+                        <el-table-column
+                                prop="petSex"
+                                align="center"
+                                label="性别"
+                                width="80">
+                        </el-table-column>
+                        <el-table-column
+                                prop="petAge"
+                                align="center"
+                                label="年龄"
+                                width="80">
+                        </el-table-column>
+                        <el-table-column
+                                prop="petDsc"
+                                align="center"
+                                label="简介">
+                        </el-table-column>
+                        <el-table-column
+                                prop="petAddress"
+                                align="center"
+                                label="地址">
+                        </el-table-column>
+                        <el-table-column
+                                prop="petIsApply"
+                                align="center"
+                                label="状态"
+                                width="80">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="图片">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="preview(scope.row.pic)">预览</el-button>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                prop="otele"
+                                align="center"
+                                label="联系电话">
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                label="操作"
+                                width="200" >
+                            <template slot-scope="scope">
+                                <el-row>
+                                    <el-button type="primary" plain @click="edit(scope.row)">编辑</el-button>
+                                    <el-button type="danger" plain @click="deleteByid(scope.row.petID)">删除</el-button>
+                                </el-row>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+                <!--分页工具条-->
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[5, 10, 15, 20]"
+                        :page-size="5"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount">
+                </el-pagination>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <div id="app2">
+                <!--搜索表单-->
+                <el-form :inline="true" :model="apply1" class="demo-form-inline">
+                    <el-form-item label="用户电话">
+                        <el-input v-model="apply1.rtele" placeholder="用户电话"></el-input>
+                    </el-form-item>
+                    <el-form-item label="申请日期">
+                        <el-date-picker
+                                v-model="apply1.applytime"
+                                type="date"
+                                placeholder="选择日期"
+                                value-format="yyyy-MM-dd" >
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="动物名字">
+                        <el-input v-model="apply1.pname" placeholder="动物名字"></el-input>
+                    </el-form-item>
+                    <el-form-item label="当前状态">
+                        <el-select v-model="apply1.apstate" clearable placeholder="请选择">
+                            <el-option label="已拒绝" value='1'></el-option>
+                            <el-option label="待审核" value='2'></el-option>
+                            <el-option label="已同意" value='3'></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onsubmit">查询</el-button>
+                    </el-form-item>
+                </el-form>
+                <!--按钮-->
+                <el-row>
+
+                    <el-button type="danger" plain @click="deleteByids">批量删除</el-button>
+                </el-row>
+                <!--审核面板-->
+                <el-dialog title="审核" :visible.sync="shenheVisible">
+                    <el-radio v-model="apstate" label='1'>已拒绝</el-radio>
+                    <el-radio v-model="apstate" label='2'>待审核</el-radio>
+                    <el-radio v-model="apstate" label='3'>已同意</el-radio>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="shenheVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="shenhe">确 定</el-button>
+                    </div>
+                </el-dialog>
+                <!--表格-->
+                <template>
+                    <el-table
+                            :data="applytableData"
+                            style="width: 100%"
+                            :row-class-name="tableRowClassName"
+                            @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                                type="selection"
+                                width="55">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="rtele"
+                                label="电话"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="rusername"
+                                label="用户昵称"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="apmessage"
+                                align="center"
+                                label="领养理由">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="applytime"
+                                align="center"
+                                label="申请时间">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="pname"
+                                align="center"
+                                label="动物名字">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="ptype"
+                                align="center"
+                                label="动物类型">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="apstate"
+                                align="center"
+                                label="状态">
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.apstate===1">已拒绝</span>
+                                <span v-else-if="scope.row.apstate===2">待审核</span>
+                                <span v-else-if="scope.row.apstate===3">已通过</span>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                align="center"
+                                label="操作"
+                                width="200" >
+                            <template slot-scope="scope">
+                                <el-row>
+                                    <el-button type="primary" @click="sheheo(scope.row.pid)">审核</el-button>
+                                    <el-button type="danger" plain @click="deleteByid(scope.row.apid)">删除</el-button>
+                                </el-row>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+                <!--分页工具条-->
+                <el-pagination
+                        @size-change="applyhandleSizeChange"
+                        @current-change="applyhandleCurrentChange"
+                        :current-page="applycurrentPage"
+                        :page-sizes="[5, 10, 15, 20]"
+                        :page-size="5"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="applytotalCount">
+                </el-pagination>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <div id="app3">
+                <!--搜索表单-->
+                <el-form :inline="true" :model="regular1" class="demo-form-inline">
+                    <el-form-item label="用户电话">
+                        <el-input v-model="regular1.tele" placeholder="用户电话"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onsubmit">查询</el-button>
+                    </el-form-item>
+                </el-form>
+                <!--按钮-->
+                <el-row>
+
+                    <el-button type="danger" plain @click="deleteByids">批量删除</el-button>
+                </el-row>
+                <!--新闻封图展示面板-->
+                <el-dialog title="头像" :visible.sync="picVisible"
+                >
+                    <el-image
+                            style="width: 100px; height: 100px;margin-right: 10px;"
+                            :src="pic"
+                            :preview-src-list="[pic]"
+                    ></el-image>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="picVisible = false">收起</el-button>
+                    </div>
+                </el-dialog>
+                <!--表格-->
+                <template>
+                    <el-table
+                            :data="tableData"
+                            style="width: 100%"
+                            :row-class-name="tableRowClassName"
+                            @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                                type="selection"
+                                width="55">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="tele"
+                                label="电话"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="password"
+                                label="密码"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="sex"
+                                align="center"
+                                label="性别">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="age"
+                                align="center"
+                                label="年龄">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="address"
+                                align="center"
+                                label="住址">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="username"
+                                align="center"
+                                label="昵称">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="status"
+                                align="center"
+                                label="身份">
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.status===1">管理员</span>
+                                <span v-else-if="scope.row.status===2">用户</span>
+                                <span v-else-if="scope.row.status===3">救助机构</span>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                align="center"
+                                label="头像">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="picshow(scope.row.pic)">预览</el-button>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                align="center"
+                                label="操作"
+                                width="200" >
+                            <template slot-scope="scope">
+                                <el-row>
+                                    <el-button type="primary" @click="">修改</el-button>
+                                    <el-button type="danger" plain @click="deleteByid(scope.row.tele)">删除</el-button>
+                                </el-row>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+                <!--分页工具条-->
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[5, 10, 15, 20]"
+                        :page-size="5"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount">
+                </el-pagination>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <div id="app4">
+                <!--搜索表单-->
+                <el-form :inline="true" :model="organization" class="demo-form-inline">
+                    <el-form-item label="机构电话">
+                        <el-input v-model="organization.tele" placeholder="电话"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onsubmit">查询</el-button>
+                    </el-form-item>
+                </el-form>
+                <!--按钮-->
+                <el-row>
+
+                    <el-button type="danger" plain @click="deleteByids">批量删除</el-button>
+                </el-row>
+                <!--审核面板-->
+                <el-dialog title="审核" :visible.sync="shenheVisible">
+                    <el-radio v-model="status" label='4'>禁用</el-radio>
+                    <el-radio v-model="status" label='3'>启用</el-radio>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="shenheVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="shenhe">确 定</el-button>
+                    </div>
+                </el-dialog>
+                <!--新闻封图展示面板-->
+                <el-dialog title="资质图片" :visible.sync="picVisible"
+                >
+                    <el-image
+                            v-for="(item, index) in picurl"
+                            :key="index"
+                            style="width: 100px; height: 100px;margin-right: 10px;"
+                            :src="item"
+                            :preview-src-list="[item]"
+                    ></el-image>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="picVisible = false">收起</el-button>
+                    </div>
+                </el-dialog>
+                <!--表格-->
+                <template>
+                    <el-table
+                            :data="tableData"
+                            style="width: 100%"
+                            :row-class-name="tableRowClassName"
+                            @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                                type="selection"
+                                width="55">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="tele"
+                                label="电话"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="password"
+                                label="密码"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="address"
+                                align="center"
+                                label="住址">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="username"
+                                align="center"
+                                label="机构名称">
+                        </el-table-column>
+
+                        <el-table-column
+                                align="center"
+                                label="资质图">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="picshow(scope.row.pic)">查看</el-button>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="status"
+                                align="center"
+                                label="帐号状态">
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.status===4">禁用</span>
+                                <span v-else-if="scope.row.status===3">启用</span>
+                            </template>
+                        </el-table-column>
+
+
+
+                        <el-table-column
+                                align="center"
+                                label="操作"
+                                width="200" >
+                            <template slot-scope="scope">
+                                <el-row>
+                                    <el-button type="primary" @click="sheheo(scope.row.tele)">审核</el-button>
+                                    <el-button type="danger" plain @click="deleteByid(scope.row.tele)">删除</el-button>
+                                </el-row>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+                <!--分页工具条-->
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[5, 10, 15, 20]"
+                        :page-size="5"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount">
+                </el-pagination>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <div id="app5">
+                <template>
+                <el-form ref="form" :model="admin" label-width="80px">
+                    <el-form-item label="联系电话">
+                        <el-col :span="5">
+                        <el-input v-model="admin.tele"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="年龄">
+                        <el-col :span="5">
+                            <el-input v-model="admin.age"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="名字">
+                        <el-col :span="5">
+                            <el-input v-model="admin.username"></el-input>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="性别">
+                        <el-select v-model="admin.sex" placeholder="请选择">
+                            <el-option label="男" value="男"></el-option>
+                            <el-option label="女" value="女"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="头像">
+                        <el-upload
+                                action="#"
+                                list-type="picture-card"
+                                :on-preview="handlePictureCardPreview"
+                                :on-remove="handleRemove"
+                                ref="upload"
+                                :file-list="fileList"
+                                :auto-upload="false"
+                                accept=".jpg,.jpeg,.gif,.bmp,.png" >
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
+                        <el-dialog :visible.sync="dialogVisible">
+                            <img width="100%" :src="dialogImageUrl" alt="">
+                        </el-dialog>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="update">立即修改</el-button>
+                        <el-button>取消</el-button>
+                    </el-form-item>
+                </el-form>
+                </template>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <div id="app6">
+                <!--搜索表单-->
+                <el-form :inline="true" :model="help" class="demo-form-inline">
+                    <el-form-item label="地点">
+                        <el-input v-model="help.address" placeholder="地点"></el-input>
+                    </el-form-item>
+                    <el-form-item label="申请日期">
+                        <el-date-picker
+                                v-model="help.hdate"
+                                type="date"
+                                placeholder="选择日期"
+                                value-format="yyyy-MM-dd" >
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="联系电话">
+                        <el-input v-model="help.rid" placeholder="联系电话"></el-input>
+                    </el-form-item>
+                        <el-button type="primary" @click="onsubmit">查询</el-button>
+                    </el-form-item>
+                </el-form>
+                <!--按钮-->
+                <el-row>
+
+                    <el-button type="danger" plain @click="deleteByids">批量删除</el-button>
+                </el-row>
+                <!--新闻封图展示面板-->
+                <el-dialog title="情况图片" :visible.sync="imgVisible"
+                >
+                    <el-image
+                            v-for="(item, index) in url"
+                            :key="index"
+                            style="width: 100px; height: 100px;margin-right: 10px;"
+                            :src="item"
+                            :preview-src-list="[item]"
+                    ></el-image>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="imgVisible = false">收起</el-button>
+                    </div>
+                </el-dialog>
+                <!--表格-->
+                <template>
+                    <el-table
+                            :data="tableData"
+                            style="width: 100%"
+                            :row-class-name="tableRowClassName"
+                            @selection-change="handleSelectionChange"
+                    >
+                        <el-table-column
+                                type="selection"
+                                width="55">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="rid"
+                                label="救助者电话"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="address"
+                                label="地点"
+                                align="center"
+                        >
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="hdate"
+                                align="center"
+                                label="时间">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="hdesc"
+                                align="center"
+                                label="情况描述">
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="hstate"
+                                align="center"
+                                label="状态">
+                            <template slot-scope="scope">
+                                <span v-if="scope.row.state===1">未处理</span>
+                                <span v-else-if="scope.row.state===2">处理中</span>
+                                <span v-else-if="scope.row.state===3">已完成</span>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column
+                                prop="pic"
+                                align="center"
+                                label="情况图片">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="img(scope.row.pic)">预览</el-button>
+                            </template>
+                        </el-table-column>
+
+
+                        <el-table-column
+                                align="center"
+                                label="操作"
+                                width="200" >
+                            <template slot-scope="scope">
+                                <el-row>
+                                    <el-button type="danger" plain @click="deleteByid(scope.row.id)">删除</el-button>
+                                </el-row>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+                <!--分页工具条-->
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[5, 10, 15, 20]"
+                        :page-size="5"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount">
+                </el-pagination>
+            </div>
+        </div>
+    </div>
+</div>
+<!--切换板块需要的js文件，layui-->
+<script src="layui-v2.6.8/layui/layui.js"></script>
+<!--引入axios的js文件-->
+<script src="js/axios-0.18.0.js"></script>
+<!--引入vus的js文件-->
+<script src="js/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<!--引入宠物信息管理的js文件-->
+<script>
+
+    const va=new Vue({
+        el: "#app",
+        mounted(){
+        this.submit();
+        },
+        methods: {
+            //==================宠物管理方法========================
+            //按条件查询
+            onsubmit(){
+                var _this =this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/pet/selectByPageAndCondition?currentPage="+1+"&pageSize="+_this.pageSize,
+                    data:_this.pet1
+                }).then(function (resp){
+                    _this.tableData=resp.data.rows;
+                    _this.totalCount=resp.data.totalCount;
+                })
+            },
+            //刷新时查询
+            submit(){
+                var _this =this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/pet/selectByPageAndCondition?currentPage="+_this.currentPage+"&pageSize="+_this.pageSize,
+                    data:_this.pet1
+                }).then(function (resp){
+                    _this.tableData=resp.data.rows;
+                    _this.totalCount=resp.data.totalCount;
+                })
+            },
+            deleteByids(){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //1.创建id数组[1,2,3]，从this.multipleSelection获取即可
+                        for(let i=0;i<this.multipleSelection.length;i++){
+                            let selectionElement=this.multipleSelection[i];
+                            this.selectedIds[i]=selectionElement.petID;
+                        }
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/pet/deleteByids",
+                            data:_this.selectedIds
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                var num=_this.totalCount-_this.selectedIds.length;
+                                var num1=Math.ceil(num/_this.pageSize)
+                                _this.currentPage=num1;
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            // 复选框选中后执行的方法
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+
+                console.log(this.multipleSelection)
+            },
+            handleSizeChange(val){
+                console.log(`每页 ${val} 条`);
+                // 重新设置每页显示的条数
+                this.pageSize=val;
+                this.submit();
+            },
+            handleCurrentChange(val){
+                console.log(`每页 ${val} 条`);
+                // 重新设置每页显示的条数
+                this.currentPage=val;
+                this.submit();
+            },
+            deleteByid(val){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/pet/deleteByid?petID="+val
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                if((_this.currentPage-1)*_this.pageSize==(_this.totalCount-1)){
+                                    _this.currentPage=_this.currentPage-1;
+                                }
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            preview(val){
+                this.imgsurl=[];
+                this.imgdialogVisible=true;
+                this.imgnames=val.split("#");
+                this.imgnames.pop();
+                var baseurl="/file/";
+                this.imgnames.forEach((item)=>{
+                    item=baseurl+item;
+                    this.imgsurl.push(item);
+                })
+            },
+            editpet(){
+                this.imgnames=[];
+                var basestr="#";
+                this.$refs.upload.uploadFiles.forEach((item)=>{
+                    item.name=item.name+basestr;
+                    this.imgnames.push(item.name);
+                    item.name = item.name.substr(0, item.name.length - 1);
+                })
+                var pic="";
+                pic=this.imgnames.join("");
+                this.pet2.pic=pic;
+                console.log(this.pet2)
+                var _this = this;
+                // 发送ajax请求，添加数据
+                axios({
+                    method:"post",
+                    url:"http://localhost:9090/web-demo/pet/update",
+                    data:_this.pet2
+                }).then(function (resp) {
+                    if(resp.data == "success"){
+                        //添加成功
+                        //关闭窗
+                        _this.editdialogVisible = false;
+                        // 重新查询数据
+                        _this.submit();
+                        // 弹出消息提示
+                        _this.$message({
+                            message: '恭喜你，修改成功',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+            edit(val){
+                this.fileList=[];
+                this.imgsurl=[];
+                //使用深拷贝，不改变拷贝前的值！！！！！！！
+                this.pet2=Object.assign({},val);
+                this.editdialogVisible=true;
+                this.imgnames=this.pet2.pic.split("#");
+                this.imgnames.pop();
+                var baseurl="/file/";
+                this.imgnames.forEach((item)=>{
+                    item=baseurl+item;
+                    this.imgsurl.push(item);
+                })
+                this.imgsurl.forEach(item=>{
+                    let obj=new Object();
+                    obj.url=item;
+                    obj.name=item.slice(6);
+                    this.fileList.push(obj);
+                });
+            },
+            add(){
+                this.dialogVisible=true;
+                this.pet={
+                    petID:"",
+                    petName:"",
+                    petType:"",
+                    petSex:"",
+                    petAge:"",
+                    petDsc:"",
+                    petIsApply:"",
+                    petAddress:"",
+                    pic:""
+                };
+                this.fileList=[];
+            },
+            addpet(){
+                this.imgnames=[];
+                var basestr="#";
+                this.$refs.upload.uploadFiles.forEach((item)=>{
+                    item.name=item.name+basestr;
+                    this.imgnames.push(item.name);
+                    item.name = item.name.substr(0, item.name.length - 1);
+                })
+                var pic="";
+                pic=this.imgnames.join("");
+                this.pet.pic=pic;
+                var _this=this;
+                axios({
+                    method:"post",
+                    url:"http://localhost:9090/web-demo/pet/add",
+                    data:_this.pet
+                }).then(function (resp) {
+                    if(resp.data == "success"){
+                        //添加成功
+                        var num=_this.totalCount+1;
+                        var num1=Math.ceil(num/_this.pageSize)
+                        _this.currentPage=num1;
+                        // 弹出消息提示
+                        _this.$message({
+                            message: '恭喜你，添加成功',
+                            type: 'success'
+                        });
+                        _this.submit();
+                        _this.dialogVisible=false;
+                    }
+                })
+            }
+            //==================！！！宠物管理方法========================
+        },
+        data() {
+            return {
+                //===============宠物管理部分需要的=============================
+                //添加图片是用来存放图片文件的数组
+                fileList:[],
+                //宠物图片展示时用的图片名字数组
+                imgnames:[],
+                //宠物图片展示展示时用的路径数组
+                imgsurl:[],
+                //每页显示的条数
+                pageSize:5,
+                //总记录数
+                totalCount:100,
+                // 当前页码
+                currentPage: 1,
+                // 添加数据对话框是否展示的标记
+                dialogVisible: false,
+                //编辑对话框是否展示标记
+                editdialogVisible: false,
+                //图片预览框是否展示
+                imgdialogVisible: false,
+                // 品牌模型数据
+                pet: {
+                    petID:"",
+                    petName:"",
+                    petType:"",
+                    petSex:"",
+                    petAge:"",
+                    petDsc:"",
+                    petIsApply:"",
+                    petAddress:"",
+                    pic:"",
+                    otele:""
+                },
+                pet1: {
+                    petID:"",
+                    petName:"",
+                    petType:"",
+                    petSex:"",
+                    petAge:"",
+                    petDsc:"",
+                    petIsApply:"",
+                    petAddress:"",
+                    pic:"",
+                    otele:""
+                },
+                pet2: {
+                    petID:"",
+                    petName:"",
+                    petType:"",
+                    petSex:"",
+                    petAge:"",
+                    petDsc:"",
+                    petIsApply:"",
+                    petAddress:"",
+                    pic:"",
+                    otele:""
+                },
+                //被选中的id数组
+                selectedIds:[],
+                // 复选框选中数据集合
+                multipleSelection: [],
+                tableData: [],
+                //===============！宠物管理部分需要的！=============================
+            }
+        }
+    })
+</script>
+<!--文章管理-->
+<script>
+    const vb=new Vue({
+        el: "#app1",
+        mounted(){
+            this.newsonsubmit();
+        },
+        methods: {
+            //==================文章管理方法========================
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            // 复选框选中后执行的方法
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+
+                console.log(this.multipleSelection)
+            },
+            newssubmit(){
+                var _this =this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/news/selectByPageAndCondition?currentPage="+1+"&pageSize="+_this.newspageSize,
+                    data:_this.news1
+                }).then(function (resp){
+                    _this.newstableData=resp.data.rows;
+                    _this.newstotalCount=resp.data.totalCount;
+                })
+            },
+            add(){
+                this.newsaddVisible=true;
+                this.news2={
+                    newsID:'',
+                    newsTitle:"",
+                    newsContent:"",
+                    newsDate:"",
+                    newsImagePath:"",
+                    newsIsTop:'',
+                    newsZan:''};
+                this.newsimgfileList=[]
+            },
+            editnews(){
+                this.newsimgnames=[];
+                var basestr="#";
+                this.$refs.upload.uploadFiles.forEach((item)=>{
+                    item.name=item.name+basestr;
+                    this.newsimgnames.push(item.name);
+                    item.name = item.name.substr(0, item.name.length - 1);
+                })
+                var newsImagePath="";
+                newsImagePath=this.newsimgnames.join("");
+                this.news3.newsImagePath=newsImagePath;
+                var _this = this;
+                // 发送ajax请求，添加数据
+                axios({
+                    method:"post",
+                    url:"http://localhost:9090/web-demo/news/update",
+                    data:_this.news3
+                }).then(function (resp) {
+                    if(resp.data == "success"){
+                        //添加成功
+                        //关闭窗
+                        _this.newseditVisible = false;
+                        // 重新查询数据
+                        _this.newsonsubmit();
+                        // 弹出消息提示
+                        _this.$message({
+                            message: '恭喜你，修改成功',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+            edit(val){
+                this.newsimgfileList=[];
+                this.newsimgsurl=[];
+                //使用深拷贝，不改变拷贝前的值！！！！！！！
+                this.news3=Object.assign({},val);
+                this.newseditVisible=true;
+                this.newsimgnames=this.news3.newsImagePath.split("#");
+                this.newsimgnames.pop();
+                var baseurl="/file/";
+                this.newsimgnames.forEach((item)=>{
+                    item=baseurl+item;
+                    this.newsimgsurl.push(item);
+                })
+                this.newsimgsurl.forEach(item=>{
+                    let obj=new Object();
+                    obj.url=item;
+                    obj.name=item.slice(6);
+                    this.newsimgfileList.push(obj);
+                });
+            },
+            deletenewsByid(val){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/news/deleteByid?newsID="+val
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                if((_this.newscurrentPage-1)*_this.newspageSize==(_this.newstotalCount-1)){
+                                    _this.newscurrentPage=_this.newscurrentPage-1;
+                                }
+                                _this.newsonsubmit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            deletenewsByids(){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //1.创建id数组[1,2,3]，从this.multipleSelection获取即可
+                        for(let i=0;i<this.multipleSelection.length;i++){
+                            let selectionElement=this.multipleSelection[i];
+                            this.selectedIds[i]=selectionElement.newsID;
+                        }
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/news/deleteByids",
+                            data:_this.selectedIds
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                var num=_this.newstotalCount-_this.selectedIds.length;
+                                var num1=Math.ceil(num/_this.newspageSize)
+                                _this.newscurrentPage=num1;
+                                _this.newsonsubmit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            xinzengnews(){
+                this.newsimgnames=[];
+                var basestr="#";
+                this.$refs.upload.uploadFiles.forEach((item)=>{
+                    item.name=item.name+basestr;
+                    this.newsimgnames.push(item.name);
+                    item.name = item.name.substr(0, item.name.length - 1);
+                })
+                var newsImagePath="";
+                newsImagePath=this.newsimgnames.join("");
+                this.news2.newsImagePath=newsImagePath;
+                var _this=this;
+                axios({
+                    method:"post",
+                    url:"http://localhost:9090/web-demo/news/add",
+                    data:_this.news2
+                }).then(function (resp) {
+                    if(resp.data == "success"){
+                        //添加成功
+                        var num=_this.newstotalCount+1;
+                        var num1=Math.ceil(num/_this.newspageSize)
+                        _this.newscurrentPage=num1;
+                        // 弹出消息提示
+                        _this.$message({
+                            message: '恭喜你，添加成功',
+                            type: 'success'
+                        });
+                        _this.newsonsubmit();
+                        _this.newsaddVisible=false;
+                    }
+                })
+            },
+            newsimg(val){
+                this.newsimgsurl=[];
+                this.newsimgVisible=true;
+                this.newsimgnames=val.split("#");
+                this.newsimgnames.pop();
+                var baseurl="/file/";
+                this.newsimgnames.forEach((item)=>{
+                    item=baseurl+item;
+                    this.newsimgsurl.push(item);
+                })
+            },
+            newsxiangqing(val){
+                this.newscontentVisible=true;
+                this.newscontent=val;
+            },
+            newshandleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+                // 重新设置每页显示的条数
+                this.newspageSize  = val;
+                this.newsonsubmit();
+            },
+            newshandleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                // 重新设置当前页码
+                this.newscurrentPage  = val;
+                this.newsonsubmit();
+            },
+            newsonsubmit(){
+                var _this =this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/news/selectByPageAndCondition?currentPage="+_this.newscurrentPage+"&pageSize="+_this.newspageSize,
+                    data:_this.news1
+                }).then(function (resp){
+                    _this.newstableData=resp.data.rows;
+                    _this.newstotalCount=resp.data.totalCount;
+                })
+            },
+            handleRemove(file, fileList) {
+                console.log(fileList)
+            }
+            //==================!!!文章管理方法========================
+        },
+        data() {
+            return {
+                //===============文章管理部分需要的=============================
+                //添加图片是用来存放图片文件的数组
+                newsimgfileList:[],
+                //新闻封图展示时用的图片名字数组
+                newsimgnames:[],
+                //新闻封图展示时用的路径数组
+                newsimgsurl:[],
+                //文章内容展示时所用变量
+                newscontent:"",
+                //文章编辑面板是否展示
+                newseditVisible:false,
+                //添加文章面板是否展示
+                newsaddVisible:false,
+                //文章封图是否展示
+                newsimgVisible:false,
+                //文章内容是否展示
+                newscontentVisible:false,
+                //表格显示新闻数据
+                newstableData:[],
+                //每页显示的条数
+                newspageSize:5,
+                //总记录数
+                newstotalCount:100,
+                // 当前页码
+                newscurrentPage: 1,
+                news1:{
+                    newsID:'',
+                    newsTitle:"",
+                    newsContent:"",
+                    newsDate:"",
+                    newsImagePath:"",
+                    newsIsTop:'',
+                    newsZan:''
+                },
+                news2:{
+                    newsID:'',
+                    newsTitle:"",
+                    newsContent:"",
+                    newsDate:"",
+                    newsImagePath:"",
+                    newsIsTop:'',
+                    newsZan:''
+                },
+                news3:{
+                    newsID:'',
+                    newsTitle:"",
+                    newsContent:"",
+                    newsDate:"",
+                    newsImagePath:"",
+                    newsIsTop:'',
+                    newsZan:''
+                },
+                //被选中的id数组
+                selectedIds:[],
+                // 复选框选中数据集合
+                multipleSelection: []
+                //===============!!!文章管理部分需要的=============================
+            }
+        }
+    })
+</script>
+<!--领养管理-->
+<script>
+    const vc=new Vue({
+        el: "#app2",
+        mounted(){
+            this.submit();
+        },
+        methods: {
+            //==================领养管理方法========================
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            // 复选框选中后执行的方法
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+
+                console.log(this.multipleSelection)
+            },
+            sheheo(val){
+                this.pid=val;
+                this.shenheVisible=true;
+            },
+            shenhe(){
+                var petIsApply="";
+                if(this.apstate==1){
+                    petIsApply="未领养";
+                }else if(this.apstate==2){
+                    petIsApply="未领养";
+                }else{
+                    petIsApply="已领养";
+                }
+                var _this=this;
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/apply/update?petIsApply="+petIsApply+"&apstate="+_this.apstate+"&pid="+_this.pid,
+                }).then(function (resp){
+                    if(resp.data=="success"){
+                        _this.$message({
+                            message: '恭喜你，审核成功！',
+                            type: 'success'
+                        });
+                        _this.shenheVisible=false;
+                        _this.submit();
+                    }
+                })
+            },
+            onsubmit(){
+                var _this=this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/apply/selectByPageAndCondition?currentPage="+1+"&pageSize="+_this.applypageSize,
+                    data:_this.apply1
+                }).then(function (resp){
+                    _this.applytableData=resp.data.rows;
+                    _this.applytotalCount=resp.data.totalCount;
+                })
+            },
+            submit(){
+                var _this=this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/apply/selectByPageAndCondition?currentPage="+_this.applycurrentPage+"&pageSize="+_this.applypageSize,
+                    data:_this.apply1
+                }).then(function (resp){
+                    _this.applytableData=resp.data.rows;
+                    _this.applytotalCount=resp.data.totalCount;
+                })
+            },
+            applyhandleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+                // 重新设置每页显示的条数
+                this.applypageSize  = val;
+                this.submit();
+            },
+            applyhandleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                // 重新设置当前页码
+                this.applycurrentPage  = val;
+                this.submit();
+            },
+            deleteByids(){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //1.创建id数组[1,2,3]，从this.multipleSelection获取即可
+                        for(let i=0;i<this.multipleSelection.length;i++){
+                            let selectionElement=this.multipleSelection[i];
+                            this.selectedIds[i]=selectionElement.apid;
+                        }
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/apply/deleteByids",
+                            data:_this.selectedIds
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                var num=_this.applytotalCount-_this.selectedIds.length;
+                                var num1=Math.ceil(num/_this.applypageSize)
+                                _this.applycurrentPage=num1;
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            deleteByid(val){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/apply/deleteByid?apid="+val
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                if((_this.applycurrentPage-1)*_this.applypageSize==(_this.applytotalCount-1)){
+                                    _this.applycurrentPage=_this.applycurrentPage-1;
+                                }
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            }
+            //==================!!!领养管理方法========================
+        },
+        data() {
+            return {
+                //===============领养管理部分需要的=============================
+                //这条信息的宠物id
+                pid:'',
+                //审核面板控制是否可见
+                shenheVisible:false,
+                //审核面板领养信息状态值
+                apstate:'',
+                //领养信息数据对象
+                apply1:{
+                    apid:'',
+                    rtele:"",
+                    pid:'',
+                    apmessage:"",
+                    applytime:"",
+                    rusername:"",
+                    pname:"",
+                    apstate:'',
+                    ptype:""
+                },
+                apply2:{
+                    apid:'',
+                    rtele:"",
+                    pid:'',
+                    apmessage:"",
+                    applytime:"",
+                    rusername:"",
+                    pname:"",
+                    apstate:'',
+                    ptype:""
+                },
+                apply3:{
+                    apid:'',
+                    rtele:"",
+                    pid:'',
+                    apmessage:"",
+                    applytime:"",
+                    rusername:"",
+                    pname:"",
+                    apstate:'',
+                    ptype:""
+                },
+                //领养信息表格的每一页的数据
+                applypageSize:5,
+                //领养信息表格的当前页
+                applycurrentPage:1,
+                //领养信息展示表需要的数据总数
+                applytotalCount:100,
+                //领养信息展示的表格所绑定的数组
+                applytableData:[],
+                //被选中的id数组
+                selectedIds:[],
+                // 复选框选中数据集合
+                multipleSelection: []
+                //===============!!!领养管理部分需要的=============================
+            }
+        }
+    })
+</script>
+<!--用户信息管理-->
+<script>
+    const vd=new Vue({
+        el: "#app3",
+        mounted(){
+            this.submit();
+        },
+        methods:{
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+                console.log(this.multipleSelection)
+            },
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+                // 重新设置每页显示的条数
+                this.pageSize = val;
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                // 重新设置当前页码
+                this.currentPage= val;
+            },
+            onsubmit(){
+                var _this=this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/Regular/selectByPageAndCondition?currentPage="+1+"&pageSize="+_this.pageSize,
+                    data:_this.regular1
+                }).then(function (resp){
+                    _this.tableData=resp.data.rows;
+                    _this.totalCount=resp.data.totalCount;
+                })
+            },
+            submit(){
+                var _this=this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/Regular/selectByPageAndCondition?currentPage="+_this.currentPage+"&pageSize="+_this.pageSize,
+                    data:_this.regular1
+                }).then(function (resp){
+                    _this.tableData=resp.data.rows;
+                    _this.totalCount=resp.data.totalCount;
+                })
+            },
+            deleteByids(){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //1.创建id数组[1,2,3]，从this.multipleSelection获取即可
+                        for(let i=0;i<this.multipleSelection.length;i++){
+                            let selectionElement=this.multipleSelection[i];
+                            this.selectedIds[i]=selectionElement.tele;
+                        }
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/Regular/deleteByids",
+                            data:_this.selectedIds
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                var num=_this.totalCount-_this.selectedIds.length;
+                                var num1=Math.ceil(num/_this.pageSize)
+                                _this.currentPage=num1;
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            deleteByid(val){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/Regular/deleteByid?tele="+val
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                if((_this.currentPage-1)*_this.pageSize==(_this.totalCount-1)){
+                                    _this.currentPage=_this.currentPage-1;
+                                }
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            picshow(val){
+                var baseurl="/file/";
+                this.pic=baseurl+val;
+                this.picVisible=true;
+            }
+        },
+        data(){
+            return {
+                //用户头像文件名
+                pic:"",
+                //用户头像面板
+                picVisible:false,
+                //用户对象
+                regular1:{
+                    tele:"",
+                    password:"",
+                    sex:"",
+                    age:'',
+                    address:"",
+                    pic:"",
+                    num:'',
+                    status:'',
+                    username:""
+                },
+                //用户信息表格的每一页的数据
+                pageSize: 5,
+                //用户信息表格的当前页
+                currentPage: 1,
+                //领养信息展示表需要的数据总数
+                totalCount: 100,
+                //领养信息展示的表格所绑定的数组
+                tableData: [],
+                //被选中的id数组
+                selectedIds: [],
+                // 复选框选中数据集合
+                multipleSelection: []
+            }
+        }
+    })
+</script>
+<!--救助机构审核-->
+<script>
+    const ve=new Vue({
+        el:"#app4",
+        mounted(){
+            this.submit();
+        },
+        methods:{
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+                console.log(this.multipleSelection)
+            },
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+                // 重新设置每页显示的条数
+                this.pageSize = val;
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                // 重新设置当前页码
+                this.currentPage= val;
+            },
+            onsubmit(){
+                var _this=this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/organization/selectByPageAndCondition?currentPage="+1+"&pageSize="+_this.pageSize,
+                    data:_this.organization
+                }).then(function (resp){
+                    _this.tableData=resp.data.rows;
+                    _this.totalCount=resp.data.totalCount;
+                })
+            },
+            submit(){
+                var _this=this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/organization/selectByPageAndCondition?currentPage="+_this.currentPage+"&pageSize="+_this.pageSize,
+                    data:_this.organization
+                }).then(function (resp){
+                    _this.tableData=resp.data.rows;
+                    _this.totalCount=resp.data.totalCount;
+                })
+            },
+            deleteByids(){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //1.创建id数组[1,2,3]，从this.multipleSelection获取即可
+                        for(let i=0;i<this.multipleSelection.length;i++){
+                            let selectionElement=this.multipleSelection[i];
+                            this.selectedIds[i]=selectionElement.tele;
+                        }
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/organization/deleteByids",
+                            data:_this.selectedIds
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                var num=_this.totalCount-_this.selectedIds.length;
+                                var num1=Math.ceil(num/_this.pageSize)
+                                _this.currentPage=num1;
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            deleteByid(val){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/organization/deleteByid?tele="+val
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                if((_this.currentPage-1)*_this.pageSize==(_this.totalCount-1)){
+                                    _this.currentPage=_this.currentPage-1;
+                                }
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            picshow(val){
+                this.picVisible=true;
+                this.picurl=[];
+                this.picurl=val.split("#");
+                this.picurl.pop();
+            },
+            sheheo(val){
+                this.tele=val;
+                this.shenheVisible=true;
+            },
+            shenhe(){
+                var _this=this;
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/organization/update?status="+_this.status+"&tele="+_this.tele,
+                }).then(function (resp){
+                    if(resp.data=="success"){
+                        _this.$message({
+                            message: '恭喜你，审核成功！',
+                            type: 'success'
+                        });
+                        _this.shenheVisible=false;
+                        _this.submit();
+                    }
+                })
+            }
+        },
+        data(){
+            return{
+                tele:"",
+                shenheVisible:false,
+                status:'',
+                picurl:[],
+                //资质图片面板
+                picVisible:false,
+                //机构对象
+                organization:{
+                   tele:"",
+                   password:"",
+                   address:"",
+                   username:"",
+                   status:'',
+                   pic:"",
+               },
+                //用户信息表格的每一页的数据
+                pageSize: 5,
+                //用户信息表格的当前页
+                currentPage: 1,
+                //领养信息展示表需要的数据总数
+                totalCount: 100,
+                //领养信息展示的表格所绑定的数组
+                tableData: [],
+                //被选中的id数组
+                selectedIds: [],
+                // 复选框选中数据集合
+                multipleSelection: []
+            }
+        }
+    })
+</script>
+<!--个人信息-->
+<script>
+    const vf=new Vue({
+        el:"#app5",
+        mounted(){
+            this.submit();
+        },
+        methods:{
+            update() {
+                this.admin.pic=this.$refs.upload.uploadFiles[0].name;
+                var _this = this;
+                // 发送ajax请求，添加数据
+                axios({
+                    method:"post",
+                    url:"http://localhost:9090/web-demo/admin/update",
+                    data:_this.admin
+                }).then(function (resp) {
+                    if(resp.data == "success"){
+                        //添加成功
+                        //关闭窗
+                        // 重新查询数据
+                        _this.onsubmit();
+                        // 弹出消息提示
+                        _this.$message({
+                            message: '恭喜你，修改成功',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+            handleRemove(file, fileList) {
+                console.log(fileList)
+            },
+            handlePictureCardPreview(file) {
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            submit(){
+               var _this=this;
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/admin/getUsername"
+                }).then(function (resp){
+                    _this.admin=Object.assign({},resp.data);
+                    _this.fileList=[];
+                    _this.url="";
+                    var baseurl="/file/";
+                    _this.url=baseurl+_this.admin.pic;
+                    let obj=new Object();
+                    console.log(_this.admin.pic)
+                    obj.name=_this.admin.pic;
+                    obj.url=_this.url;
+                    _this.fileList.push(obj);
+                })
+
+            },
+            onsubmit(){
+                var _this=this;
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/admin/selectbytele?tele="+_this.admin.tele
+                }).then(function (resp){
+                    _this.admin=Object.assign({},resp.data);
+                    _this.fileList=[];
+                    _this.url="";
+                    var baseurl="/file/";
+                    _this.url=baseurl+_this.admin.pic;
+                    let obj=new Object();
+                    console.log(_this.admin.pic)
+                    obj.name=_this.admin.pic;
+                    obj.url=_this.url;
+                    _this.fileList.push(obj);
+                })
+            }
+        },
+        data(){
+        return{
+            admin:{
+                tele:"",
+                password:"",
+                sex:"",
+                age:'',
+                pic:"",
+                status:'',
+                username:""
+            },
+            dialogImageUrl: '',
+            dialogVisible: false,
+            fileList:[],
+            url:""
+        }}
+    })
+</script>
+<script>
+    const vg=new Vue({
+        el:"#app6",
+        mounted(){
+            this.submit();
+        },
+        methods:{
+            tableRowClassName({row, rowIndex}) {
+                if (rowIndex === 1) {
+                    return 'warning-row';
+                } else if (rowIndex === 3) {
+                    return 'success-row';
+                }
+                return '';
+            },
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+                console.log(this.multipleSelection)
+            },
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+                // 重新设置每页显示的条数
+                this.pageSize = val;
+                this.submit();
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                // 重新设置当前页码
+                this.currentPage= val;
+                this.submit();
+            },
+            onsubmit(){
+                var _this=this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/help/selectByPageAndCondition?currentPage="+1+"&pageSize="+_this.pageSize,
+                    data:_this.help
+                }).then(function (resp){
+                    _this.tableData=resp.data.rows;
+                    _this.totalCount=resp.data.totalCount;
+                })
+            },
+            submit(){
+                var _this=this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({method:"post",
+                    url:"http://localhost:9090/web-demo/help/selectByPageAndCondition?currentPage="+_this.currentPage+"&pageSize="+_this.pageSize,
+                    data:_this.help
+                }).then(function (resp){
+                    _this.tableData=resp.data.rows;
+                    _this.totalCount=resp.data.totalCount;
+                })
+            },
+            deleteByids(){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //1.创建id数组[1,2,3]，从this.multipleSelection获取即可
+                        for(let i=0;i<this.multipleSelection.length;i++){
+                            let selectionElement=this.multipleSelection[i];
+                            this.selectedIds[i]=selectionElement.id;
+                        }
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/help/deleteByids",
+                            data:_this.selectedIds
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                var num=_this.totalCount-_this.selectedIds.length;
+                                var num1=Math.ceil(num/_this.pageSize)
+                                _this.currentPage=num1;
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            deleteByid(val){
+                this.$confirm(
+                    '此操作将永久删除数据，是否继续？',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }
+                )
+                    .then(() => {
+                        //2.发送ajax请求
+                        var _this = this;
+                        // 发送ajax请求，添加数据
+                        axios({
+                            method:"post",
+                            url:"http://localhost:9090/web-demo/help/deleteByid?id="+val
+                        }).then(function (resp) {
+                            if(resp.data == "success"){
+                                //删除成功
+                                // 重新查询数据
+                                if((_this.currentPage-1)*_this.pageSize==(_this.totalCount-1)){
+                                    _this.currentPage=_this.currentPage-1;
+                                }
+                                _this.submit();
+                                // 弹出消息提示
+                                _this.$message({
+                                    message: '删除成功',
+                                    type: 'success'
+                                });
+                            }
+                        })
+                    })
+                    .catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除！',
+                        })
+                    })
+            },
+            img(val){
+                this.url=[];
+                this.imgVisible=true;
+                this.imgnames=val.split("#");
+                this.imgnames.pop();
+                var baseurl="/file/";
+                this.imgnames.forEach((item)=>{
+                    item=baseurl+item;
+                    this.url.push(item);
+                })
+            }
+        },
+        data(){return{
+            imgnames:[],
+            url:[],
+            imgVisible:false,
+            help:{
+               id:'',
+               address:"",
+               hdate:"",
+               hdesc:"",
+               pic:"",
+               rid:"",
+                hstate:''
+           },
+            //用户信息表格的每一页的数据
+            pageSize: 5,
+            //用户信息表格的当前页
+            currentPage: 1,
+            //领养信息展示表需要的数据总数
+            totalCount: 100,
+            //领养信息展示的表格所绑定的数组
+            tableData: [],
+            //被选中的id数组
+            selectedIds: [],
+            // 复选框选中数据集合
+            multipleSelection: []
+        }}
+    })
+</script>
+</body>
+</html>

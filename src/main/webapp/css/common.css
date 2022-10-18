@@ -1,0 +1,70 @@
+/*-- Sticky Navigation --*/
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.fixed-bottom{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%; 
+}
+nav{
+    z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color:burlywood ;
+            padding: 10px 40px;
+}
+nav li {
+    display: inline-block;
+    padding: 0 20px;
+    font-size: 15px;
+}
+.logo {
+    font-size: 30px;
+    font-weight: 600;
+}
+.login{
+    font-size: 15px;
+}
+.login a:hover{
+    color:#666;
+}
+/* 页面底部 */
+.footer{
+    width: 100%;
+    background-color: burlywood;
+    color: #ffffff;
+    height: 120px;
+    padding-top: 20px;
+}
+.footer .mid{
+    width: 45%;
+    margin: 0 auto;
+}
+.footer .mid ul li{
+    float: left;
+    margin-left: 30px;
+}
+.footer .youqing{
+    width: 50%;
+    margin: 0 auto;
+    padding-top: 20px;
+}
+.footer .youqing ul li{
+    float: left;
+    margin-left: 15px;
+}
+.footer .gongsi{
+    width: 50%;
+    margin: 0 auto;
+    padding-top: 20px;
+    text-align: center;
+}
+
+/* //页面底部 */

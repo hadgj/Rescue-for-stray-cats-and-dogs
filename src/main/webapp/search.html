@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流浪猫狗救助平台</title>
+    <!-- css files -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/include.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <!-- Style-CSS -->
+    <style>
+        .w{
+            background-color: rgb(242, 242, 242);
+            width: 100%;
+            height: auto;
+            padding-bottom: 20px;
+        }
+        .search {
+            padding:10px 0;
+        }
+        .search  form {
+            position:relative;
+            width:300px;
+            margin:0 auto;
+        }
+        .search  input,button {
+            border:none;
+            outline:none;
+        }
+        .search  input {
+            width:100%;
+            height:42px;
+            padding-left:13px;
+        }
+        .bar button {
+            height:42px;
+            width:42px;
+            cursor:pointer;
+            position:absolute;
+        }
+        .bar input {
+            border:2px solid burlywood;
+            border-radius:5px;
+            background:transparent;
+            top:0;
+            right:0;
+        }
+        .bar button {
+            background:burlywood;
+            border-radius:0 5px 5px 0;
+            width:60px;
+            top:0;
+            right:0;
+        }
+        .bar button:before {
+            content:"搜索";
+            font-size:13px;
+            color:#F9F0DA;
+        }
+        .tab {
+            padding:10px 20px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+            width: 90%;
+            margin: 0 auto;
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.5;
+            font-weight: 300;
+            color: #888;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+        .tabs {
+            display: table;
+            position: relative;
+            overflow: hidden;
+            margin: 0;
+            width: 100%;
+            border-bottom: 2px solid burlywood;
+        }
+        .tabs li {
+            float: left;
+            line-height: 38px;
+            overflow: hidden;
+            padding: 0;
+            position: relative;
+        }
+        .tabs a {
+            background-color: #eff0f2;
+            border-bottom: 1px solid #fff;
+            color: #888;
+            font-weight: 500;
+            display: block;
+            letter-spacing: 0;
+            outline: none;
+            padding: 0 20px;
+            text-decoration: none;
+            -webkit-transition: all 0.2s ease-in-out;
+            -moz-transition: all 0.2s ease-in-out;
+            transition: all 0.2s ease-in-out;
+        }
+        .tabs_item {
+            display: none;
+            padding: 30px 20px;
+            height: auto;
+        }
+        .tabs_item h4 {
+            font-weight: bold;
+            color: burlywood;
+            font-size: 20px;
+        }
+        .tabs_item img {
+            width: 200px;
+            float: left;
+            margin-right: 30px;
+        }
+        .tabs_item:first-child {
+            display: block;
+        }
+        .current a {
+            color: #fff;
+            background: burlywood;
+        }
+
+    </style>
+    <style>
+        .post-slide{
+            margin: 0 15px;
+            width: 300px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .post-slide:hover{
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        .post-slide .post-img{
+            overflow: hidden;
+            width: 300px;
+            border-radius: 5px 5px 0px 0px;
+        }
+        .post-slide .post-img img{
+            width: 100%;
+            height: 250px;
+            transform: scale(1);
+            transition: all 1s ease-in-out 0s;
+        }
+        .post-slide:hover .post-img img{
+            transform: scale(1.08);
+        }
+        .post-slide .post-content{
+            background: #fff;
+            padding: 20px;
+            border-radius: 0px 0px 5px 5px;
+        }
+        .post-slide .post-title{
+            font-size: 17px;
+            font-weight: 600;
+            margin-top: 0;
+            text-transform: capitalize;
+            height: 51px;
+        }
+        .post-slide .post-title a{
+            display: inline-block;
+            color: #808080;
+            transition: all 0.3s ease 0s;
+        }
+        .post-slide .post-title a:hover{
+            color: burlywood;
+            text-decoration: none;
+        }
+        .post-slide .post-description{
+            font-size: 15px;
+            color: #676767;
+            line-height: 24px;
+            margin-bottom: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 4;
+            word-wrap: break-word;
+            word-break: break-all;
+            height: 96px;
+        }
+        .post-slide .post-bar{
+            padding: 0;
+            margin-bottom: 15px;
+            list-style: none;
+        }
+        .post-slide .post-bar li{
+            color: #676767;
+            padding: 2px 0;
+        }
+        .post-slide .post-bar li i{
+            margin-right: 5px;
+        }
+
+        .post-slide .read-more{
+            display: inline-block;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            background: burlywood;
+            border-bottom-right-radius: 10px;
+            text-transform: capitalize;
+            transition: all 0.30s linear;
+        }
+        .post-slide .read-more:hover{
+            background: #333;
+            text-decoration: none;
+        }
+    </style>
+    <style>
+    .hidden{
+        display: none;
+    }
+    .hidden1{
+        display: none;
+    }
+    .hidden2{
+      display: none;
+    }
+    .list{
+        overflow: hidden;
+    }
+    .more{
+        overflow: hidden;
+        padding:10px;
+        text-align: center;
+    }
+    .more a{
+        display: block;
+        width: 120px;
+        padding:8px 0;
+        color:#fff;
+        margin:0 auto;
+        background:burlywood;
+        text-align:center;
+        border-radius:3px;
+        font-size: 15px;
+    }
+    .more a:hover{
+        text-decoration: none;
+        background: #333;
+        color: #fff;}
+    .more1{
+        overflow: hidden;
+        padding:10px;
+        text-align: center;
+    }
+    .more1 a{
+        display: block;
+        width: 120px;
+        padding:8px 0;
+        color:#fff;
+        margin:0 auto;
+        background:burlywood;
+        text-align:center;
+        border-radius:3px;
+        font-size: 15px;
+    }
+    .more1 a:hover{
+        text-decoration: none;
+        background: #333;
+        color: #fff;}
+    .more2{
+        overflow: hidden;
+        padding:10px;
+        text-align: center;
+    }
+    .more2 a{
+        display: block;
+        width: 120px;
+        padding:8px 0;
+        color:#fff;
+        margin:0 auto;
+        background:burlywood;
+        text-align:center;
+        border-radius:3px;
+        font-size: 15px;
+    }
+    .more2 a:hover{
+        text-decoration: none;
+        background: #333;
+        color: #fff;}
+    .psl1{}
+    .psl2{}
+    .psl3{}
+    </style>
+</head>
+<body>
+<!-- 导航栏出现 -->
+<div id="header"></div>
+<!-- 导航栏结束 -->
+
+<div class="w"  id="tab1">
+    <div class="search bar">
+        <form>
+            <input placeholder="请输入关键词" v-model="keyword">
+            <button type="button" v-on:click="submit"></button>
+        </form>
+    </div>
+    <div class="tab">
+
+        <ul class="tabs">
+            <li><a href="#">求助广场({{hcount}})</a></li>
+            <li><a href="#">领养中心({{pcount}})</a></li>
+            <li><a href="#">猫狗知识({{acount}})</a></li>
+        </ul> <!-- / tabs -->
+
+        <div class="tab_content">
+
+            <div class="tabs_item">
+                <h4 v-if="hdisplay==1">请输入关键词进行搜索</h4>
+                <div  v-else-if="hdisplay==2">
+                <div class="hidden">
+                <div class="post-slide psl1" v-for="(item,index) in quanjudata[0]">
+                    <div class="post-img">
+                        <a href="#"><img v-bind:src="'/file/'+item.pic.substring(0,item.pic.indexOf('#'))" alt=""></a>
+                    </div>
+                    <div class="post-content">
+                        <h3 class="post-title">
+                            <a :href="'helpdetails.html?newsID='+item.id">{{item.address}}</a>
+                        </h3>
+                        <p class="post-description">
+                        {{item.hdesc}}
+                        </p>
+                        <ul class="post-bar">
+                            <li><img src="images/日历.png" style="width: 15px;height: 15px;margin-right: 5px;">{{item.hdate}}</li>
+                        </ul>
+                        <a :href="'helpdetails.html?newsID='+item.id" class="read-more">了解更多</a>
+                    </div>
+                </div>
+                </div>
+                <div class="list" id="list1">数据加载中，请稍后...</div>
+                <div class="more">
+                        <a href="javascript:;" v-on:click="loadMore" v-html="wenzi"></a>
+                </div>
+                </div>
+                <h4 v-else-if="hdisplay==3">暂无数据</h4>
+            </div> <!-- / tabs_item -->
+
+            <div class="tabs_item">
+                <h4 v-if="pdisplay==1">请输入关键词进行搜索</h4>
+                <div  v-else-if="pdisplay==2">
+                    <div class="hidden1">
+                    <div class="post-slide psl2" v-for="(item,index) in quanjudata[1]">
+                        <div class="post-img">
+                            <a href="#"><img v-bind:src="'/file/'+item.pic.substring(0,item.pic.indexOf('#'))" alt=""></a>
+                        </div>
+                        <div class="post-content">
+                            <h3 class="post-title">
+                                <a :href="'petdetails.html?newsID='+item.petID">名字:{{item.petName}}</a>
+                            </h3>
+                            <p class="post-description">
+                                {{item.petDsc}}
+                            </p>
+                            <ul class="post-bar">
+                                <li><img src="images/日历.png" style="width: 15px;height: 15px;margin-right: 5px;">年龄:{{item.petAge}};类型:{{item.petType}};性别:{{item.petSex}}</li>
+                            </ul>
+                            <ul class="post-bar">
+                                <li><img src="images/地址.png" style="width: 15px;height: 15px;margin-right: 5px;">地址:{{item.petAddress}}</li>
+                            </ul>
+                            <a :href="'petdetails.html?newsID='+item.petID" class="read-more">了解更多</a>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="list" id="list2">数据加载中，请稍后...</div>
+                    <div class="more1">
+                        <a href="javascript:;" v-on:click="loadMore1" v-html="wenzi1"></a>
+                    </div>
+                </div>
+                <h4 v-else-if="pdisplay==3">暂无数据</h4>
+            </div> <!-- / tabs_item -->
+
+            <div class="tabs_item">
+                <h4 v-if="adisplay==1">请输入关键词进行搜索</h4>
+                <div  v-else-if="adisplay==2">
+                    <div class="hidden2">
+                    <div class="post-slide psl3" v-for="(item,index) in quanjudata[2]">
+                        <div class="post-img">
+                            <a href="#"><img v-bind:src="'/file/'+item.newsImagePath.substring(0,item.newsImagePath.indexOf('#'))" alt=""></a>
+                        </div>
+                        <div class="post-content">
+                            <h3 class="post-title"><a :href="'newsdetails.html?newsID='+item.newsID" >{{item.newsTitle}}</a></h3>
+                            <p class="post-description">
+                             {{item.newsContent}}
+                            </p>
+                            <ul class="post-bar">
+                                <li><img src="images/日历.png" style="width: 15px;height: 15px;margin-right: 5px;">{{item.newsDate}}</li>
+                            </ul>
+                            <a :href="'newsdetails.html?newsID='+item.newsID" class="read-more">了解更多</a>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="list" id="list3">数据加载中，请稍后...</div>
+                    <div class="more2">
+                        <a href="javascript:;" v-on:click="loadMore2" v-html="wenzi2">加载更多</a>
+                    </div>
+                </div>
+                <h4 v-else-if="adisplay==3">暂无数据</h4>
+            </div> <!-- / tabs_item -->
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- 网页底部 -->
+<div id="footer"></div>
+<!-- //网页底部 -->
+
+
+<!--新建vue对象控制tab1-->
+<script>
+    const va=new Vue({
+        el:"#tab1",
+        mounted(){
+
+        },
+        methods: {
+            submit(){
+                if (this.keyword == "") {
+                    window.alert("请先输入关键词！");
+                    return;
+                }
+                var guanjianci = "%" + this.keyword + "%";
+                var _this = this;
+                //页面加载完成之后，发送异步数据请求，查询数据
+                axios({
+                    method: "post",
+                    url: "http://localhost:9090/web-demo/quantised/qsearch",
+                    data: {
+                        keyword: guanjianci
+                    }
+                }).then(function (resp)
+                {
+                    console.log(resp.data);
+                    _this.quanjudata = resp.data;
+                    if (_this.quanjudata[0].length == 0) {
+                        _this.hcount = 0;
+                        _this.hdisplay = 3;
+                    } else {
+                        _this.hcount = _this.quanjudata[0].length;
+                        _this.hdisplay = 2;
+                    }
+                    if (_this.quanjudata[1].length == 0) {
+                        _this.pcount = 0;
+                        _this.pdisplay = 3;
+                    } else {
+                        _this.pcount = _this.quanjudata[1].length;
+                        _this.pdisplay = 2;
+                    }
+                    if (_this.quanjudata[2].length == 0) {
+                        _this.acount = 0;
+                        _this.adisplay = 3;
+                    } else {
+                        _this.acount = _this.quanjudata[2].length;
+                        _this.adisplay = 2;
+                    }
+                    new Promise(function (resolve, reject) {
+                        setTimeout(function () {
+                            _this.init();
+                            resolve();
+                        }, 1000);
+                    })
+
+                })
+            },
+            init(){
+                var _this=this;
+                var divs1=$(".psl1");
+                var divs2=$(".psl2");
+                var divs3=$(".psl3");
+                $("#list1").html("");
+                $("#list2").html("");
+                $("#list3").html("");
+                if(divs1.length<4)
+                this.wenzi="全部加载完毕...";
+                else
+                this.wenzi="加载更多";
+                if(divs2.length<4)
+                this.wenzi1="全部加载完毕...";
+                else
+                this.wenzi1="加载更多";
+                if(divs3.length<4)
+                this.wenzi2="全部加载完毕...";
+                else
+                this.wenzi2="加载更多";
+                var str=this.keyword;
+                for(var n=0;n<3;n++){
+                    divs1.eq(n).appendTo("#list1");
+                     var findText=divs1.eq(n).innerHTML;
+                     console.log(findText);
+                    // divs1.eq(n).innerHTML=findText.join('<font style="color:#ab001a;">'+str+'</font>')
+                    divs2.eq(n).appendTo("#list2");
+                    divs3.eq(n).appendTo("#list3");
+                }
+                for(var i=this.default;i<divs1.length;i++){
+                    _this.content.push(divs1.eq(i));
+                }
+                for(var i=this.default;i<divs2.length;i++){
+                    _this.content1.push(divs2.eq(i));
+
+                }
+                for(var i=this.default;i<divs3.length;i++){
+                    _this.content2.push(divs3.eq(i));
+                }
+                console.log(this.content);
+                console.log(this.content1);
+                console.log(this.content2);
+                $(".hidden").html("");
+                $(".hidden1").html("");
+                $(".hidden2").html("");
+            },
+            loadMore(){
+                console.log(this.content);
+                for(var i =0;i<3;i++){
+                    var target1 = this.content.shift();
+                    if(!target1){
+                        this.wenzi="全部加载完毕...";
+                        break;
+                    }
+                    $("#list1").append(target1);
+                }
+            },
+            loadMore1(){
+                for(var i =0;i<3;i++){
+                    var target2 = this.content1.shift();
+                    if(!target2){
+                        this.wenzi1="全部加载完毕...";
+                        break;
+                    }
+                    $("#list2").append(target2);
+                }
+            },
+            loadMore2() {
+                console.log(this.content2);
+                for(var i =0;i<3;i++){
+                    var target3 = this.content2.shift();
+                    if(!target3){
+                        this.wenzi2="全部加载完毕...";
+                        break;
+                    }
+                    if(this.content2.length==0){
+                        this.wenzi2="全部加载完毕...";
+                    }
+                    $("#list3").append(target3);
+                }
+            }
+        },
+        data(){
+            return{
+                hcount:'0',
+                pcount:'0',
+                acount:'0',
+                hdisplay:'1',
+                pdisplay:'1',
+                adisplay:'1',
+                quanjudata:[],
+                keyword:"",
+                content:[],
+                content1:[],
+                content2:[],
+                default:'3', //默认显示图片个数
+                loading:'5',  //每次点击按钮后加载的个数
+                wenzi:"加载更多",
+                wenzi1:"加载更多",
+                wenzi2:"加载更多"
+
+
+            //================================================
+            }
+        }
+    })
+</script>
+<!--//新建vue对象控制tab1-->
+
+<!-- 导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+<script>
+    $(window).scroll(function () {
+        if ($(window).scrollTop() >= 400) {
+            $('nav').addClass('fixed-header');
+        } else {
+            $('nav').removeClass('fixed-header');
+        }
+    });
+
+    /* scrollTop() >= 795
+       Should be equal the the height of the header
+     */
+</script>
+<!-- //导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+
+</body>
+</html>

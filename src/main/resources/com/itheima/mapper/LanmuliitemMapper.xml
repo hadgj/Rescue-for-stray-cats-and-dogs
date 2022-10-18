@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.mapper.LanmuliitemMapper">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="lanmuliitemResultMap" type="lanmuliitem">
+        <result property="id" column="id" />
+        <result property="parentid" column="parentid" />
+        <result property="itemname" column="itemname" />
+        <result property="itemques" column="itemques" />
+        <result property="itemansw" column="itemansw" />
+        <result property="itempic" column="itempic" />
+    </resultMap>
+    <delete id="deleteByids">
+    delete  from lanmuliitem where id in
+    <foreach collection="ids" item="id" separator="," open="(" close=")">
+        #{id}
+    </foreach>
+    </delete>
+
+    <select id="selectByPageAndCondition" resultMap="lanmuliitemResultMap">
+        select * from lanmuliitem
+            <where>
+                <if test="lanmuliitem.parentid !=null and lanmuliitem.parentid !=''">
+            and parentid=#{lanmuliitem.parentid}
+                </if>
+            </where>
+            limit #{begin},#{size}
+    </select>
+
+    <select id="selectTotalCountByCondition" resultType="java.lang.Integer">
+        select count(*) from lanmuliitem
+        <where>
+            <if test="parentid !=null and parentid !=''">
+                and parentid=#{parentid}
+            </if>
+        </where>
+    </select>
+</mapper>

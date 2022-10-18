@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流浪猫狗救助平台</title>
+    <!-- css files -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/help.css">
+    <link rel="stylesheet" href="helpfont/iconfont.css">
+    <script src="js/pagination.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <link rel="stylesheet" href="css/pagination.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/include.js"></script>
+	<!-- Style-CSS -->
+</head>
+<body>
+    <!-- 导航栏出现 -->
+    <div id="header"></div>
+    <!-- 导航栏结束 -->
+
+
+
+   <div class="w clearfix">
+   <div id="app6">
+   <div class="left">
+       <div>
+           <span>求助时间</span>
+           <input type="date" v-model="help1.hdate">
+       </div>
+       <div>
+           <span>求助地点</span>
+           <input type="text" v-model="help1.address">
+       </div>
+       <div>
+           <button v-on:click="submit1">点击筛选</button>
+       </div>
+   </div>
+   <div class="middle">
+     <div class="neirong">
+      <ul>
+        <li v-for="(help,index) in tableData" :key="index">
+            <a  v-on:click="to(help.id)" style="color:#666;">
+            <img :src="'/file/'+help.pic" alt="">
+            <div class="middler">
+               <div class="tele">
+                 <i class="iconfont icon-dianhua"></i>
+                 <span id="rtele">{{help.rid.substr(0,3)+ '****' + help.rid.substr(7)}}</span>
+               </div>
+               <div class="desc">
+                 <p>
+                     <i class="iconfont icon-describe"></i>
+                     {{help.hdesc}}
+                   </p>
+               </div>
+              <div class="xinxi">
+                 <i class="iconfont icon-shijian"></i>
+                 <span style="margin-top: 5px;display: inline-block;">{{help.hdate}}</span>
+                 <i class="iconfont icon-didian"></i>
+                 <span>{{help.address}}</span>
+                 <i class="iconfont icon-zhuangtai"></i>
+                  <span v-if="help.hstate===1">未处理</span>
+                  <span v-else-if="help.hstate===2">处理中</span>
+                  <span v-else-if="help.hstate===3">已完成</span>
+              </div>
+             
+            </div>
+            </a>
+        </li>
+    </ul>
+     </div>
+      
+       <div class="yema">
+				<div id="pages"></div>
+			</div>
+   </div>
+   <div class="right">
+           <div class="paihang">
+               <img src="images/热销-火焰.png" alt="">
+               <span>按用户信用度的优质求助</span>
+               <div class="pcard">
+                   <ul>
+                       <li v-for="(youxians,index) in youxiandata">
+                           <a  v-on:click="to(youxians.id)" style="color:black;"> <span>{{youxians.address}}</span></a>
+                           <div class="pcardr">
+                               <img src="images/信用.png" alt="">
+                           </div>
+                       </li>
+                   </ul>
+               </div>
+           </div>
+       </div>
+   </div>
+   </div>
+
+
+
+
+
+<!-- 网页底部 -->
+<div id="footer"></div>
+  <!-- //网页底部 -->
+
+    <script>
+        const vg=new Vue({
+            el:"#app6",
+            mounted(){
+                this.submit();
+                this.youxian()
+            },
+            methods:{
+                onsubmit(index){
+                    var _this=this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/help/selectByPageAndCondition?currentPage="+index+"&pageSize="+5,
+                        data:_this.help1
+                    }).then(function (resp){
+                        _this.tableData=resp.data.rows;
+                        _this.tableData.forEach((item)=>{
+                            var wz=item.pic.indexOf("#");
+                            item.pic=item.pic.substring(0,wz);
+                        })
+                        console.log(resp.data)
+                    })
+                },
+                submit(){
+                    var _this=this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/help/selectByPageAndCondition?currentPage="+1+"&pageSize="+5,
+                        data:_this.help
+                    }).then(function (resp){
+                        _this.tableData=resp.data.rows;
+                        _this.totalCount=resp.data.totalCount;
+                        _this.tableData.forEach((item)=>{
+                            var wz=item.pic.indexOf("#");
+                            item.pic=item.pic.substring(0,wz);
+                        })
+                        console.log(_this.totalCount);
+                        new Pagination({
+                            element: '#pages',
+                            type: 1,
+                            pageIndex: 1,
+                            pageSize: 5,
+                            pageCount: 5,
+                            total:_this.totalCount,
+                            jumper: true,
+                            singlePageHide: false,
+                            prevText: '上一页',
+                            nextText: '下一页',
+                            disabled: true,
+                            currentChange: function(index) {
+                              vg.onsubmit(index);
+                            }
+                        });
+                    })
+                },
+                submit1(){
+                    var _this=this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/help/selectByPageAndCondition?currentPage="+1+"&pageSize="+5,
+                        data:_this.help1
+                    }).then(function (resp){
+                        _this.tableData=resp.data.rows;
+                        _this.totalCount=resp.data.totalCount;
+                        _this.tableData.forEach((item)=>{
+                            var wz=item.pic.indexOf("#");
+                            item.pic=item.pic.substring(0,wz);
+                        })
+                        new Pagination({
+                            element: '#pages',
+                            type: 1,
+                            pageIndex: 1,
+                            pageSize: 5,
+                            pageCount: 5,
+                            total:_this.totalCount,
+                            jumper: true,
+                            singlePageHide: false,
+                            prevText: '上一页',
+                            nextText: '下一页',
+                            disabled: true,
+                            currentChange: function(index) {
+                                vg.onsubmit(index);
+                            }
+                        });
+                    })
+                },
+                to(id){
+                    window.open('helpdetails.html?newsID='+id);
+                },
+                youxian(){
+                    var _this=this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/help/youxian"
+                    }).then(function (resp){
+                        _this.youxiandata=resp.data;
+                    })
+                }
+            },
+            data(){return{
+                help:{
+                    id:'',
+                    address:"",
+                    hdate:"",
+                    hdesc:"",
+                    pic:"",
+                    rid:"",
+                    hstate:''
+                },
+                help1:{
+                    id:'',
+                    address:"",
+                    hdate:"",
+                    hdesc:"",
+                    pic:"",
+                    rid:"",
+                    hstate:''
+                },
+                //领养信息展示表需要的数据总数
+                totalCount: 100,
+                //领养信息展示的表格所绑定的数组
+                tableData: [],
+                youxiandata:[]
+            }}
+        })
+    </script>
+
+    <!-- smoothscroll -->
+	<script src="js/SmoothScroll.min.js"></script>
+	<!-- //smoothscroll -->
+
+	<!-- start-smooth-scrolling -->
+	<script src="js/easing.js"></script>
+	<script>
+		jQuery(document).ready(function ($) {
+			$(".scroll").click(function (event) {
+				event.preventDefault();
+
+				$('html,body').animate({
+					scrollTop: $(this.hash).offset().top
+				}, 1000);
+			});
+		});
+	</script>
+	<!-- //end-smooth-scrolling -->
+
+
+
+    <!-- js -->
+	<script src="js/jquery-2.2.3.min.js"></script>
+	<!-- Necessary-JavaScript-File-For-Bootstrap -->
+	<!-- //js -->
+
+	
+
+    <!-- 导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+    <script>
+		$(window).scroll(function () {
+			if ($(window).scrollTop() >= 400) {
+				$('nav').addClass('fixed-header');
+			} else {
+				$('nav').removeClass('fixed-header');
+			}
+		});
+
+		/* scrollTop() >= 795
+		   Should be equal the the height of the header
+		 */
+	</script>
+    <!-- //导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+
+</body>
+</html>

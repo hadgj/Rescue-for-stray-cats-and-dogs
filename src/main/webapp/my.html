@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>流浪猫狗救助平台</title>
+    <!-- css files -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/my.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/include.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+	<!-- Style-CSS -->
+    <style>
+        .container h2 {
+            margin-bottom: 20px; }
+        .container .list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap; }
+        .container .list li {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 20px 20px 0; }
+        .container .list li img {
+            width: 100%;
+            height: 100%; }
+        .container .list li .close {
+            display: none;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 50px;
+            font-weight: 100;
+            color: #dedede;
+            transform: translate(-50%, -56%); }
+        .container .list li .close:hover {
+            color: #fff; }
+        .container .list li.file {
+            width: 150px;
+            height: 150px;
+            border: 1px dashed #ccc; }
+        .container .list li.file input {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer; }
+        .container .list li.file::before {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            content: "+";
+            font-size: 50px;
+            font-weight: 100;
+            color: #dedede;
+            transform: translate(-50%, -56%); }
+        .container .list li.file:hover {
+            border-color: #5192fe; }
+        .container .list li:not(:last-child)::before {
+            display: none;
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); }
+        .container .list li:not(:last-child):hover::before {
+            display: block; }
+        .container .list li:not(:last-child):hover .close {
+            display: block; }
+        .container .jlist {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap; }
+        .container .jlist li {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 20px 20px 0; }
+        .container .jlist li img {
+            width: 100%;
+            height: 100%; }
+        .container .jlist li .close {
+            display: none;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 50px;
+            font-weight: 100;
+            color: #dedede;
+            transform: translate(-50%, -56%); }
+        .container .jlist li .close:hover {
+            color: #fff; }
+        .container .jlist li.jfile {
+            width: 150px;
+            height: 150px;
+            border: 1px dashed #ccc; }
+        .container .jlist li.jfile input {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer; }
+        .container .jlist li.jfile::before {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            content: "+";
+            font-size: 50px;
+            font-weight: 100;
+            color: #dedede;
+            transform: translate(-50%, -56%); }
+        .container .jlist li.jfile:hover {
+            border-color: #5192fe; }
+        .container .jlist li:not(:last-child)::before {
+            display: none;
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); }
+        .container .jlist li:not(:last-child):hover::before {
+            display: block; }
+        .container .jlist li:not(:last-child):hover .close {
+            display: block; }
+    </style>
+    <style>
+
+        .post-slide{
+            margin: 0 15px;
+            background-color: burlywood;
+            width: 195px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
+            margin-left: 0px;
+        }
+        .post-slide:hover{
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+        }
+        .post-slide .post-img{
+            overflow: hidden;
+            width: 195px;
+            border-radius: 5px 5px 0px 0px;
+        }
+        .post-slide .post-img img{
+            width: 100%;
+            height: 150px;
+            transform: scale(1);
+            transition: all 1s ease-in-out 0s;
+
+        }
+        .post-slide:hover .post-img img{
+            transform: scale(1.08);
+        }
+        .post-slide .post-content{
+            width: 195px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 0px 0px 5px 5px;
+        }
+        .post-slide .post-title{
+            font-size: 17px;
+            font-weight: 600;
+            margin-top: 0;
+            text-transform: capitalize;
+        }
+        .post-slide .post-title a{
+            display: inline-block;
+            color: #808080;
+            transition: all 0.3s ease 0s;
+        }
+        .post-slide .post-title a:hover{
+            color: #3d3030;
+            text-decoration: none;
+        }
+        .post-slide .post-description{
+            font-size: 15px;
+            color: #676767;
+            line-height: 24px;
+            margin-bottom: 14px;
+        }
+        .post-slide .post-bar{
+            padding: 0;
+            margin-bottom: 15px;
+            list-style: none;
+        }
+        .post-slide .post-bar li{
+            color: #676767;
+            padding: 2px 0;
+        }
+        .post-slide .post-bar li i{
+            margin-right: 5px;
+        }
+        .post-slide .post-bar li a{
+            display: inline-block;
+            font-size: 12px;
+            color: #808080;
+            transition: all 0.3s ease 0s;
+        }
+        .post-slide .post-bar li a:after{
+            content: ",";
+        }
+        .post-slide .post-bar li a:last-child:after{
+            content: "";
+        }
+        .post-slide .post-bar li a:hover{
+            color: #3d3030;
+            text-decoration: none;
+        }
+        .post-slide .read-more{
+            display: inline-block;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            background: burlywood;
+            border-bottom-right-radius: 10px;
+            text-transform: capitalize;
+            transition: all 0.30s linear;
+        }
+        .post-slide .read-more:hover{
+            background: #333;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏出现 -->
+    <div id="header"></div>
+    <!-- //导航栏结束 -->
+
+    <!-- 个人中心开始 -->
+    <div class="w clearfix">
+        <div id="app5">
+        <div class="left">
+                <div class="tou">
+                    <img :src="'/file/'+regular.pic">
+                    <span v-if="regular.num===0">LV1</span>
+                    <span v-else-if="regular.num>0&&regular.num<11">LV2</span>
+                    <span v-else-if="regular.num>10&&regular.num<31">LV3</span>
+                    <span v-else-if="regular.num>30&&regular.num<61">LV4</span>
+                    <span v-else-if="regular.num>60">LV5</span>
+                </div>
+                <div>
+                    <ul>
+                        <li class="ulmenu1 current">基本信息</li>
+                        <li class="ulmenu2">修改密码</li>
+                        <li class="ulmenu3">我的求助</li>
+                        <li class="ulmenu4">我的收养</li>
+                        <li class="ulmenu5">我的喜欢</li>
+                        <li class="ulmenu6">投诉用户</li>
+                        <li class="ulmenu7">收到投诉</li>
+                        <li class="ulmenu8">发布留言</li>
+                        <li class="ulmenu9">收到留言</li>
+                    </ul>
+                </div>
+        </div>
+        <div class="right">
+            <div class="get-menu">
+                <a href="#">个人中心</a>
+                <span>></span>
+                <a class="A1" href="#">基本信息</a>
+            </div>
+            <div class="content">
+                <div class="menu1 menu_tab active">
+                <div class="gerenh clearfix">
+                <div class="gerenhl">
+                <p>基本信息</p>
+                </div>
+                <div class="gerenr">
+            
+                </div>
+                </div>
+                <div class="gerenb">
+                    <form>
+                        <div>
+                            <span>电话</span>
+                            <input type="text" v-model="regular.tele" disabled="disabled">
+                            <span>不可修改</span>
+                        </div>
+                        <div>
+                            <span>性别</span>
+                            <select  v-model="regular.sex">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                        <div>
+                            <span>年龄</span>
+                            <input v-model="regular.age" type="text">
+                        </div>
+                        <div>
+                            <span>地址</span>
+                            <input v-model="regular.address" type="text">
+                        </div>
+                        <div>
+                            <span>用户名</span>
+                            <input type="text" v-model="regular.username">
+                        </div>
+                        <div>
+                            <span>救助次数</span>
+                            <input type="text" v-model="regular.num" disabled="disabled">
+                            <span>不可修改</span>
+                        </div>
+                        <div>
+                            <span>头像</span>
+                            <div class="container">
+                                <ul class="list">
+                                    <li>
+                                        <div class="close">×</div>
+                                        <img :src="'/file/'+regular.pic" />
+                                    </li>
+                                    <li class="file">
+                                        <!-- multiple这个属性可以实现文件选择框的多选 -->
+                                        <input type="file"  id="file" multiple />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <button v-on:click="updatejichu">保存修改</button>
+                        </div>
+                    </form>
+                </div>
+                </div>
+                <div class="menu2 menu_tab">
+                    <div class="gerenh clearfix">
+                        <div class="gerenhl">
+                            <p>修改密码</p>
+                        </div>
+                        <div class="gerenr">
+
+                        </div>
+                    </div>
+                    <div class="gerenb">
+                        <form class="mima">
+                            <div>
+                                <span>原密码：</span>
+                                <input type="password" id="oneip" v-on:blur="yuanmima($event)">
+                                <label id="onela"></label>
+                            </div>
+                            <div>
+                                <span>新密码：</span>
+                                <input type="password" id="twoip" disabled="disabled" v-on:blur="xinmima">
+                                <label id="twola"></label>
+                            </div>
+                            <div>
+                                <span>确认密码：</span>
+                                <input type="password" id="threeip" disabled="disabled" v-on:blur="qverenmima($event)">
+                                <label id="threela"></label>
+                            </div>
+                            <div>
+                                <button id="fourbt" v-on:click="updatemima" disabled="true">保存修改</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="menu3 menu_tab">
+                    <div class="gerenh clearfix">
+                        <div class="gerenhl">
+                            <p>我的求助</p>
+                        </div>
+                        <div class="gerenr">
+
+                        </div>
+                    </div>
+                    <div class="gerenb">
+                        <div class="post-slide" style="width: 100%;" v-for="(item,key) in helps">
+                            <div class="post-content" style="width: 100%;">
+                                <h3 class="post-title">
+                                    <a v-if="item.hstate==1" href="#">处理状态：未处理</a>
+                                    <a v-else-if="item.hstate==2" href="#">处理结果：处理中</a>
+                                    <a v-else-if="item.hstate==3" href="#">处理结果：已完成</a>
+                                </h3>
+                                <h3 class="post-title">
+                                    <a>求助时间：{{item.hdate}}</a>
+                                </h3>
+                                <ul class="post-bar">
+                                    <li>求助描述：{{item.hdesc}}</li>
+                                </ul>
+                                <div style="margin-bottom: 5px">
+                                    <a style="display: inline-block" class="read-more" v-on:click="to(item.id)">修改此条信息</a>
+                                    <a style="display: inline-block" class="read-more" v-on:click="deletehelp(item.id)">删除此条信息</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu4 menu_tab">
+                    <div class="gerenh clearfix">
+                        <div class="gerenhl">
+                            <p>我的收养</p>
+                        </div>
+                        <div class="gerenr">
+
+                        </div>
+                    </div>
+                    <div class="gerenb">
+                        <div class="post-slide" style="width: 100%;" v-for="(item,key) in applies">
+                            <div class="post-content" style="width: 100%;">
+                                <h3 class="post-title">
+                                    <a v-if="item.apstate==1" href="#">申请状态：已拒绝</a>
+                                    <a v-else-if="item.apstate==2" href="#">申请状态：待审核</a>
+                                    <a v-else-if="item.apstate==3" href="#">申请状态：已通过</a>
+                                </h3>
+                                <h3 class="post-title">
+                                    <a>申请时间：{{item.applytime}}</a>
+                                </h3>
+                                <h3 class="post-title">
+                                    <a>
+                                        宠物名字：{{item.pname}}
+                                        <img :src="'images/'+item.ptype+'.png'" style="width: 25px;height: 25px;">
+                                    </a>
+                                </h3>
+                                <ul class="post-bar">
+                                    <li>申请理由：{{item.apmessage}}</li>
+                                </ul>
+                                <div style="margin-bottom: 5px">
+
+                                    <a style="display: inline-block" class="read-more" v-on:click="deleteapply(item.apid)" v-if="item.apstate!=3">删除此条申请</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu5 menu_tab">
+                    <div class="gerenh clearfix">
+                        <div class="gerenhl">
+                            <p>我的喜欢</p>
+                        </div>
+                        <div class="gerenr">
+
+                        </div>
+                    </div>
+                    <div class="gerenb">
+                        <div class="post-slide" v-for="(item,key) in newss">
+                            <div class="post-img">
+                                <a href="#"><img :src="'/file/'+item.newsImagePath" alt=""></a>
+                            </div>
+                            <div class="post-content">
+                                <h3 class="post-title" style="height: 80px;"><a href="#">{{item.newsTitle}}</a></h3>
+                                <ul class="post-bar">
+                                    <li>
+                                        <div style="height: 30px;">
+                                        <img src="images/已赞.png" style="width: 25px;height: 25px;margin-bottom: 10px">
+                                        <span style="line-height: 30px;">{{item.newsZan}}</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <a v-bind:href="'newsdetails.html?newsID='+item.newsID" class="read-more">阅读全文</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu6 menu_tab">
+                    <div class="gerenh clearfix">
+                        <div class="gerenhl">
+                            <p>投诉用户</p>
+                        </div>
+                        <div class="gerenr">
+
+                        </div>
+                    </div>
+                    <div class="gerenb">
+                        <form class="tousu">
+                            <div>
+                                <span>被举报人身份：</span>
+                                <select v-model="ro.bstatus">
+                                    <option value='2'>普通用户</option>
+                                    <option value='3'>救助机构</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span>被举报人电话：</span>
+                                <input id="tousuip" type="text" v-model="ro.btele" v-on:blur="tousuIscunzai">
+                                <label id="tousula"></label>
+                            </div>
+                            <div>
+                                <span>举报理由：</span>
+                                <textarea v-model="ro.message" id="tousuta" disabled="disabled"></textarea>
+                            </div>
+                            <div>
+                            <span>情况图片：</span>
+                            <div class="container">
+                                <ul class="jlist">
+                                    <li class="jfile">
+                                        <!-- multiple这个属性可以实现文件选择框的多选 -->
+                                        <input type="file" id="jfile" multiple />
+                                    </li>
+                                </ul>
+                            </div>
+                            </div>
+                            <div>
+                                <button disabled="disabled" id="tousubt" v-on:click="addtousu">提交投诉</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="menu7 menu_tab">
+                    <div class="gerenh clearfix">
+                        <div class="gerenhl">
+                            <p>收到投诉</p>
+                        </div>
+                        <div class="gerenr">
+
+                        </div>
+                    </div>
+                    <div class="gerenb">
+                        <div class="post-slide" style="width: 100%;" v-for="(item,key) in ros">
+                            <div class="post-content" style="width: 100%;">
+                                <h3 class="post-title">
+                                    <a v-if="item.jstate==2" href="#">处理结果：警告处理</a>
+                                    <a v-else-if="item.jstate==3" href="#">处理结果：封禁帐号</a>
+                                </h3>
+                                <ul class="post-bar">
+                                    <li>投诉内容：{{item.message}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="menu8 menu_tab">
+                    <div class="gerenh clearfix">
+                        <div class="gerenhl">
+                            <p>发布留言</p>
+                        </div>
+                        <div class="gerenr">
+
+                        </div>
+                    </div>
+                    <div class="gerenb">
+                        <form class="tousu">
+                            <div>
+                                <span>留言人身份：</span>
+                                <select v-model="chat.bstatus">
+                                    <option value='1'>管理员</option>
+                                    <option value='2'>普通用户</option>
+                                    <option value='3'>救助机构</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span>留言人电话：</span>
+                                <input id="chatip" type="text" v-model="chat.btele" v-on:blur="chatIscunzai">
+                                <label id="chatla"></label>
+                            </div>
+                            <div>
+                                <span>留言内容：</span>
+                                <textarea v-model="chat.message" id="chatta" disabled="disabled"></textarea>
+                            </div>
+                            <div>
+                                <button disabled="disabled" id="chatbt" v-on:click="addchat">发送留言</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="menu9 menu_tab">
+                    <div class="gerenh clearfix">
+                        <div class="gerenhl">
+                            <p>收到留言</p>
+                        </div>
+                        <div class="gerenr">
+
+                        </div>
+                    </div>
+                    <div class="gerenb">
+                        <div class="post-slide" style="width: 100%;" v-for="(item,key) in chats">
+                            <div class="post-content" style="width: 100%;">
+                                <h3 class="post-title">
+                                    <a>联系电话：{{item.ctele}}</a>
+                                </h3>
+                                <h3 class="post-title">
+                                    <a v-if="item.cstatus==1">留言者身份:管理员</a>
+                                    <a v-else-if="item.cstatus==2">留言者身份:普通用户</a>
+                                    <a v-else="item.cstatus==3">留言者身份:救助机构</a>
+                                </h3>
+                                <ul class="post-bar">
+                                    <li>留言内容：{{item.message}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- //个人中心结束 -->
+
+
+    <!-- 网页底部 -->
+    <div id="footer"></div>
+    <!-- //网页底部 -->
+    <script>
+        window.addEventListener("load", () => {
+            // 先获取一下上传的这个图标元素
+            let uploadFile = document.querySelector("#file");
+            // 在获取一下整个list和file这个框框
+            let list = document.querySelector(".list");
+            let file = document.querySelector(".file");
+            // 为这个按钮添加change事件 当你选中图片然后点击确定时触发
+            uploadFile.addEventListener("change", function () {
+                for (let item of this.files) {
+                    // 利用正则表达式判断是否是图片类型;
+                    if (!/image\/\w+/.test(item.type)) {
+                        alert("只能选择图片");
+                        return;
+                    }
+                    // 创建一个FileReader()对象
+                    let reader = new FileReader();
+                    // readAsDataURL方法可以将上传的图片格式转为base64,然后在存入到图片路径,这样就可以上传任意位置的图片
+                    reader.readAsDataURL(item);
+                    reader.addEventListener("load", function () {
+                        // reader.result得到的是转换后的图片base64格式直接放到src路径即可
+                        let li = document.createElement("li");
+                        li.innerHTML = `
+				<div class="close">×</div>
+				<img src="/file/${item.name}"
+					 />
+				`;
+                        list.insertBefore(li, file);
+                    });
+                }
+            });
+            // ok  现在做删除功能 因为每次添加新的li元素都会重绘dom树 没法给每个.close元素绑定事件 这里我们就用事件委托实现
+            list.addEventListener("click", (e) => {
+                // e是页面一开启就自动生成的事件对象
+                // e.target是触发事件的对象 ndoeName是每一个dom元素都有节点 且值全部都是大写
+                // 这里就是如果点击的是×号就删除 否则不删除
+                if (e.target.nodeName == "DIV") {
+                    // removeChild是移除子元素 括号写的是点击的div对应的父元素就是某一个li了
+                    list.removeChild(e.target.parentNode);
+                }
+            });
+            // 到此 功能实现 第一次写js视频 有点不太会的亚子 不会的私信或者评论哈,感谢支持 我继续努力 一起加油
+        });
+    </script>
+    <script>
+        window.addEventListener("load", () => {
+            // 先获取一下上传的这个图标元素
+            let uploadFile = document.querySelector("#jfile");
+            // 在获取一下整个list和file这个框框
+            let list = document.querySelector(".jlist");
+            let file = document.querySelector(".jfile");
+            // 为这个按钮添加change事件 当你选中图片然后点击确定时触发
+            uploadFile.addEventListener("change", function () {
+                for (let item of this.files) {
+                    // 利用正则表达式判断是否是图片类型;
+                    if (!/image\/\w+/.test(item.type)) {
+                        alert("只能选择图片");
+                        return;
+                    }
+                    // 创建一个FileReader()对象
+                    let reader = new FileReader();
+                    // readAsDataURL方法可以将上传的图片格式转为base64,然后在存入到图片路径,这样就可以上传任意位置的图片
+                    reader.readAsDataURL(item);
+                    reader.addEventListener("load", function () {
+                        // reader.result得到的是转换后的图片base64格式直接放到src路径即可
+                        let li = document.createElement("li");
+                        li.innerHTML = `
+				<div class="close">×</div>
+				<img src="/file/${item.name}"
+					 />
+				`;
+                        list.insertBefore(li, file);
+                    });
+                }
+            });
+            // ok  现在做删除功能 因为每次添加新的li元素都会重绘dom树 没法给每个.close元素绑定事件 这里我们就用事件委托实现
+            list.addEventListener("click", (e) => {
+                // e是页面一开启就自动生成的事件对象
+                // e.target是触发事件的对象 ndoeName是每一个dom元素都有节点 且值全部都是大写
+                // 这里就是如果点击的是×号就删除 否则不删除
+                if (e.target.nodeName == "DIV") {
+                    // removeChild是移除子元素 括号写的是点击的div对应的父元素就是某一个li了
+                    list.removeChild(e.target.parentNode);
+                }
+            });
+            // 到此 功能实现 第一次写js视频 有点不太会的亚子 不会的私信或者评论哈,感谢支持 我继续努力 一起加油
+        });
+    </script>
+    <script>
+        const vf=new Vue({
+            el:"#app5",
+            mounted()
+            {
+           this.onsubmit();
+           this.myshoucang();
+           this.myhelp();
+           this.myapply();
+           this.mytousu();
+           this.mychat();
+            },
+            methods:{
+                myshoucang(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({
+                        method: "post",
+                        url: "http://localhost:9090/web-demo/Regular/getUsername"
+                    }).then(function (resp) {
+                        //==================================
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/zan/shoucang?tele="+resp.data.tele+"&status="+resp.data.status
+                        }).then(function (resp) {
+                            _this.ids=[];
+                            console.log(resp.data)
+                            resp.data.forEach((item)=>{
+                                _this.ids.push(item.nid);
+                            })
+                            //============================
+                            axios({
+                                method: "post",
+                                url: "http://localhost:9090/web-demo/news/selectByids",
+                                data:_this.ids
+                            }).then(function (resp) {
+                                _this.newss=resp.data;
+                                _this.newss.forEach((item)=>{
+                                    var wz=item.newsImagePath.indexOf('#');
+                                    item.newsImagePath=item.newsImagePath.substring(0,wz);
+                                })
+                            })
+                        })
+                    })
+                },
+                onsubmit(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({
+                        method: "post",
+                        url: "http://localhost:9090/web-demo/Regular/getUsername"
+                    }).then(function (resp) {
+                        //========================================
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/Regular/selectByid?tele="+resp.data.tele
+                        }).then(function (resp) {
+                            _this.regular=resp.data;
+                        })
+                    })
+                },
+                updatejichu(){
+                    var xuanze=window.confirm("确认要修改基础信息？");
+                    if(xuanze==true)
+                    {
+                        var _this = this;
+                        _this.fuzhi();
+                        _this.regular.pic = _this.pic;
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/Regular/update",
+                            data: _this.regular
+                        }).then(function (resp) {
+                            if (resp.data == "success")
+                            {
+                                window.alert("恭喜您，修改成功！")
+                            }
+                            else
+                            {
+                                window.alert("修改失败！")
+                            }
+                        })
+                    }
+                    else
+                    {
+                        window.alert("已取消修改！")
+                    }
+                },
+                fuzhi(){
+                    let list = document.querySelector(".list");
+                    this.pic="";
+                    for(let item of list.getElementsByTagName("img")){
+                        this.pic=this.pic+item.src.substring(27);
+                    }
+                },
+                jfuzhi(){
+                    let list = document.querySelector(".jlist");
+                    this.jpic="";
+                    for(let item of list.getElementsByTagName("img")){
+                        this.jpic=this.jpic+"/file/"+item.src.substring(27)+"#";
+                    }
+                },
+                myapply(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({
+                        method: "post",
+                        url: "http://localhost:9090/web-demo/Regular/getUsername"
+                    }).then(function (resp) {
+                            axios({
+                                method: "post",
+                                url: "http://localhost:9090/web-demo/apply/selectByRtele?tele="+resp.data.tele
+                            }).then(function (resp) {
+                                 _this.applies=resp.data;
+                            })
+                    })
+                },
+                myhelp(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({
+                        method: "post",
+                        url: "http://localhost:9090/web-demo/Regular/getUsername"
+                    }).then(function (resp) {
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/help/selectAllByRid?rid="+resp.data.tele
+                        }).then(function (resp) {
+                            _this.helps=resp.data;
+                        })
+                    })
+                },
+                deletehelp(id){
+                    var xuanze=window.confirm("确认要删除这条求助信息？");
+                    if(xuanze==true) {
+                        var _this = this;
+                        //页面加载完成之后，发送异步数据请求，查询数据
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/help/deleteByid?id=" + id
+                        }).then(function (resp) {
+                            if (resp.data == "success") {
+                                window.alert("删除成功!");
+                                _this.myhelp();
+                            } else {
+                                window.alert("删除失败!");
+                            }
+                        })
+                    }
+                    else
+                    {
+                        window.alert("已取消删除！")
+                    }
+                },
+                deleteapply(id){
+                    var xuanze=window.confirm("确认要删除这条领养申请？");
+                    if(xuanze==true) {
+                        var _this = this;
+                        //页面加载完成之后，发送异步数据请求，查询数据
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/apply/deleteByid?apid=" + id
+                        }).then(function (resp) {
+                            if (resp.data == "success") {
+                                window.alert("删除成功!");
+                                _this.myapply();
+                            } else {
+                                window.alert("删除失败!");
+                            }
+                        })
+                    }
+                    else
+                    {
+                        window.alert("已取消删除！")
+                    }
+                },
+                updateapply(val){
+                    window.alert("您确定要修改这条数据吗？");
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({
+                        method: "post",
+                        url: "http://localhost:9090/web-demo/apply/updateapply",
+                        data:val
+                    }).then(function (resp) {
+                        if(resp.data=="success"){
+                            window.alert("修改成功!");
+                            _this.myapply();
+                        }
+                    })
+                },
+                to(id){
+                    window.open('edithelp.html?id='+id);
+                },
+                yuanmima(e){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({
+                        method: "post",
+                        url: "http://localhost:9090/web-demo/Regular/getUsername"
+                    }).then(function (resp) {
+                             if(e.target.value===resp.data.password){
+                                 $("#onela").html("验证成功，下一步");
+                                 $("#twoip").removeAttr("disabled");
+                             }else{
+                                 $("#onela").html("验证失败，密码错误");
+                             }
+                    })
+                },
+                xinmima(){
+                    $("#twola").html("下一步");
+                    $("#threeip").removeAttr("disabled");
+                },
+                qverenmima(e){
+                    console.log($("#twoip").val())
+                    if(e.target.value===$("#twoip").val()){
+                        $("#threela").html("确认密码一致，下一步");
+                        $("#fourbt").removeAttr("disabled");
+                    }else{
+                        $("#threela").html("密码不一致");
+                    }
+                },
+                updatemima(){
+                    var xuanze=window.confirm("确认要修改密码？");
+                    if(xuanze==true)
+                    {
+                        this.regular.password = $("#threeip").val();
+                        var _this = this;
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/Regular/update",
+                            data: _this.regular
+                        }).then(function (resp) {
+                            if (resp.data == "success") {
+                                window.alert("恭喜您，修改密码成功！")
+                            } else {
+                                window.alert("修改失败！")
+                            }
+                        })
+                    }
+                    else
+                    {
+                        window.alert("已取消修改！")
+                    }
+                },
+                tousuIscunzai(){
+                 if(this.ro.bstatus==2){
+                     //投诉的用户是普通用户
+                     var tele=this.ro.btele;
+                     var _this =this;
+                     //页面加载完成之后，发送异步数据请求，查询数据
+                     axios({
+                         method: "post",
+                         url: "http://localhost:9090/web-demo/Regular/selectByid?tele="+tele
+                     }).then(function (resp) {
+                         if(resp.data==null){
+                             $("#tousula").html("该用户不存在")
+                         }else{
+                             $("#tousula").html("用户存在，继续填写")
+                             $("#tousuta").removeAttr("disabled");
+                             $("#tousubt").removeAttr("disabled");
+                         }
+                     })
+                 }else{
+                     //投诉的用户是救助机构
+                     var tele=$("#tousuip").val();
+                     var _this =this;
+                     //页面加载完成之后，发送异步数据请求，查询数据
+                     axios({
+                         method: "post",
+                         url: "http://localhost:9090/web-demo/organization/selectByid?tele="+tele
+                     }).then(function (resp) {
+                         if(resp.data==null){
+                             $("#tousula").html("该用户不存在")
+                         }else{
+                             $("#tousula").html("用户存在，继续填写")
+                             $("#tousuta").removeAttr("disabled");
+                             $("#tousubt").removeAttr("disabled");
+                         }
+                     })
+                 }
+                },
+                addtousu(){
+                    var xuanze=window.confirm("确认要投诉这个用户？");
+                    if(xuanze==true)
+                    {
+                        this.ro.jstatus = 2;
+                        this.jfuzhi();
+                        this.ro.pic = this.jpic;
+                        var _this = this;
+                        //页面加载完成之后，发送异步数据请求，查询数据
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/Regular/getUsername"
+                        }).then(function (resp) {
+                            _this.ro.jtele = resp.data.tele;
+                            axios({
+                                method: "post",
+                                url: "http://localhost:9090/web-demo/ro/add",
+                                data: _this.ro
+                            }).then(function (resp) {
+                                if (resp.data == "success") {
+                                    window.alert("您已经投诉成功，管理员会做出处理！")
+                                } else {
+                                    window.alert("投诉失败！")
+                                }
+                            })
+                        })
+                    }
+                    else
+                    {
+                        window.alert("已取消投诉！")
+                    }
+                },
+                mytousu(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({
+                        method: "post",
+                        url: "http://localhost:9090/web-demo/Regular/getUsername"
+                    }).then(function (resp) {
+                        //==================================
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/ro/jinggao?btele="+resp.data.tele+"&bstatus="+resp.data.status
+                        }).then(function (resp) {
+                           _this.ros=resp.data;
+                        })
+                    })
+                },
+                chatIscunzai(){
+                    if(this.chat.bstatus==1){
+                        //投诉的用户是普通用户
+                        var tele=this.chat.btele;
+                        var _this =this;
+                        //页面加载完成之后，发送异步数据请求，查询数据
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/admin/selectbytele?tele="+tele
+                        }).then(function (resp) {
+                            if(resp.data==null){
+                                $("#chatla").html("该用户不存在")
+                            }else{
+                                $("#chatla").html("用户存在，继续填写")
+                                $("#chatta").removeAttr("disabled");
+                                $("#chatbt").removeAttr("disabled");
+                            }
+                        })
+                    }
+                    else if(this.chat.bstatus==2){
+                        //投诉的用户是普通用户
+                        var tele=this.chat.btele;
+                        var _this =this;
+                        //页面加载完成之后，发送异步数据请求，查询数据
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/Regular/selectByid?tele="+tele
+                        }).then(function (resp) {
+                            if(resp.data==null){
+                                $("#chatla").html("该用户不存在")
+                            }else{
+                                $("#chatla").html("用户存在，继续填写")
+                                $("#chatta").removeAttr("disabled");
+                                $("#chatbt").removeAttr("disabled");
+                            }
+                        })
+                    }else{
+                        //投诉的用户是救助机构
+                        var tele=this.chat.btele;
+                        var _this =this;
+                        //页面加载完成之后，发送异步数据请求，查询数据
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/organization/selectByid?tele="+tele
+                        }).then(function (resp) {
+                            if(resp.data==null){
+                                $("#chatla").html("该用户不存在")
+                            }else{
+                                $("#chatla").html("用户存在，继续填写")
+                                $("#chatta").removeAttr("disabled");
+                                $("#chatbt").removeAttr("disabled");
+                            }
+                        })
+                    }
+                },
+                mychat(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({
+                        method: "post",
+                        url: "http://localhost:9090/web-demo/Regular/getUsername"
+                    }).then(function (resp) {
+                        //==================================
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/chat/selectchats?btele="+resp.data.tele+"&bstatus="+resp.data.status
+                        }).then(function (resp) {
+                            _this.chats=resp.data;
+                        })
+                    })
+                },
+                addchat(){
+                    var xuanze=window.confirm("确认要发送留言？");
+                    if(xuanze==true)
+                    {
+                        this.chat.cstatus = 2;
+                        var _this = this;
+                        //页面加载完成之后，发送异步数据请求，查询数据
+                        axios({
+                            method: "post",
+                            url: "http://localhost:9090/web-demo/Regular/getUsername"
+                        }).then(function (resp) {
+                            _this.chat.ctele = resp.data.tele;
+                            axios({
+                                method: "post",
+                                url: "http://localhost:9090/web-demo/chat/add",
+                                data: _this.chat
+                            }).then(function (resp) {
+                                if (resp.data == "success") {
+                                    window.alert("您已经留言成功！")
+                                } else {
+                                    window.alert("留言失败！")
+                                }
+                            })
+                        })
+                    }
+                    else
+                    {
+                        window.alert("已取消发送！")
+                    }
+                }
+            },
+            data(){
+                return{
+                    //用户对象
+                    regular:{
+                        tele:"",
+                        password:"",
+                        sex:"",
+                        age:'',
+                        address:"",
+                        pic:"",
+                        num:'',
+                        status:'',
+                        username:""
+                    },
+                    zan: {
+                        id: '',
+                        tele: "",
+                        nid: '',
+                        status: ''
+                    },
+                    news: {
+                        newsID: '',
+                        newsTitle: "",
+                        newsContent: "",
+                        newsDate: "",
+                        newsImagePath: "",
+                        newsIsTop: '',
+                        newsZan: ''
+                    },
+                    ro:{
+                        id:'',
+                        bstatus:'',
+                        btele:"",
+                        message:"",
+                        pic:"",
+                        jtele:"",
+                        jstatus:'',
+                        jstate:1
+                    },
+                    chat:{
+                        id:'',
+                        bstatus:'',
+                        btele:"",
+                        ctele:"",
+                        cstatus:'',
+                        message:""
+                    },
+                    pic:"",
+                    jpic:"",
+                    ids:[],
+                    newss:[],
+                    applies:[],
+                    helps:[],
+                    ros:[],
+                    chats:[]
+                }
+            }
+        })
+    </script>
+
+
+<!-- js -->
+<script src="js/jquery-2.2.3.min.js"></script>
+<script src="js/pc.js"></script>
+<!-- Necessary-JavaScript-File-For-Bootstrap -->
+<!-- //js -->
+
+<!-- 导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+   <script>
+    $(window).scroll(function () {
+        if ($(window).scrollTop() >= 400) {
+            $('nav').addClass('fixed-header');
+        } else {
+            $('nav').removeClass('fixed-header');
+        }
+    });
+
+    /* scrollTop() >= 795
+       Should be equal the the height of the header
+     */
+</script>
+<!-- //导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+
+
+</body>
+</html>

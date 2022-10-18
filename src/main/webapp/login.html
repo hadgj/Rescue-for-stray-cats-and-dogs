@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <script src="js/vue.js"></script>
+    <style>
+        * {
+            box-sizing:border-box;
+        }
+        body {
+            font-family:'Montserrat',sans-serif;
+            background:#f6f5f7;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            height:150vh;
+            margin:-20px 0 50px;
+        }
+        h1 {
+            font-weight:bold;
+            margin:0;
+        }
+        p {
+            font-size:14px;
+            line-height:20px;
+            letter-spacing:.5px;
+            margin:20px 0 30px;
+        }
+        span {
+            font-size:12px;
+        }
+        a {
+            color:#333;
+            font-size:14px;
+            text-decoration:none;
+            margin:15px 0;
+        }
+        .dowebok {
+            background:#fff;
+            border-radius:10px;
+            box-shadow:0 14px 28px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.22);
+            position:relative;
+            overflow:hidden;
+            width:768px;
+            max-width:100%;
+            height:580px;
+        }
+        .form-container form {
+            background:#fff;
+            display:flex;
+            flex-direction:column;
+            padding:0 50px;
+            height:100%;
+            align-items:center;
+            text-align:center;
+        }
+        .social-container {
+            margin:20px 0;
+        }
+        .social-container a {
+            border:1px solid #ddd;
+            border-radius:50%;
+            display:inline-flex;
+            justify-content:center;
+            align-items:center;
+            margin:0 5px;
+            height:40px;
+            width:40px;
+        }
+        .social-container a:hover {
+            background-color:#eee;
+        }
+       .form-container select{
+           background:#eee;
+           border:none;
+           padding:12px 15px;
+           margin:8px 0;
+           width:100%;
+           outline:none;
+       }
+        .form-container input {
+            background:#eee;
+            border:none;
+            padding:12px 15px;
+            margin:8px 0;
+            width:100%;
+            outline:none;
+        }
+        .form-container span{
+            font-size: 8px;
+            outline:none;
+            float: left;
+        }
+        .form-container label{
+            float: left;
+        }
+        button {
+            border-radius:20px;
+            border:1px solid lightseagreen;
+            background:lightseagreen;
+            color:#fff;
+            font-size:12px;
+            font-weight:bold;
+            padding:12px 45px;
+            letter-spacing:1px;
+            text-transform:uppercase;
+            transition:transform 80ms ease-in;
+            cursor:pointer;
+        }
+        button:active {
+            transform:scale(.95);
+        }
+        button:focus {
+            outline:none;
+        }
+        button.ghost {
+            background:transparent;
+            border-color:#fff;
+        }
+        .form-container {
+            position:absolute;
+            top:0;
+            height:100%;
+            transition:all .6s ease-in-out;
+        }
+        .sign-in-container {
+            left:0;
+            width:50%;
+            z-index:2;
+        }
+        .sign-in-container form{
+            justify-content:center;
+        }
+        .sign-up-container {
+            left:0;
+            width:50%;
+            z-index:1;
+            opacity:0;
+        }
+        .overlay-container {
+            position:absolute;
+            top:0;
+            left:50%;
+            width:50%;
+            height:100%;
+            overflow:hidden;
+            transition:transform .6s ease-in-out;
+            z-index:100;
+        }
+        .overlay {
+            background-image: url("images/登陆封面.jpg") ;
+            background-repeat: no-repeat;
+            background-size:100% 100% ;
+            color:#fff;
+            position:relative;
+            left:-100%;
+            height:100%;
+            width:200%;
+            transform:translateY(0);
+            transition:transform .6s ease-in-out;
+        }
+        .overlay-panel {
+            position:absolute;
+            top:0;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            padding:0 40px;
+            height:100%;
+            width:50%;
+            text-align:center;
+            transform:translateY(0);
+            transition:transform .6s ease-in-out;
+        }
+        .overlay-right {
+            right:0;
+            transform:translateY(0);
+            color: #0C0C0C;
+        }
+        .overlay-right button{
+            border-color:#0C0C0C;
+            color: #0C0C0C;
+        }
+        .overlay-left {
+            transform:translateY(-20%);
+            color: #0C0C0C;
+        }
+        .overlay-left button{
+            border-color:#0C0C0C;
+            color: #0C0C0C;
+        }
+        /* Move signin to right */
+        .dowebok.right-panel-active .sign-in-container {
+            transform:translateY(100%);
+        }
+        /* Move overlay to left */
+        .dowebok.right-panel-active .overlay-container {
+            transform:translateX(-100%);
+        }
+        /* Bring signup over signin */
+        .dowebok.right-panel-active .sign-up-container {
+            transform:translateX(100%);
+            opacity:1;
+            z-index:5;
+        }
+        /* Move overlay back to right */
+        .dowebok.right-panel-active .overlay {
+            transform:translateX(50%);
+        }
+        /* Bring back the text to center */
+        .dowebok.right-panel-active .overlay-left {
+            transform:translateY(0);
+        }
+        /* Same effect for right */
+        .dowebok.right-panel-active .overlay-right {
+            transform:translateY(20%);
+        }
+        .tab{
+            width: 50%;
+            height: 40px;
+            line-height:40px;
+            text-align:center;
+            background-color: lightseagreen;
+            float: left;
+        }
+        .tabitem{
+
+        }
+        .tabitem div{
+            width: 284px;
+        }
+        .show {
+            display: block;
+        }
+        .current {
+            background-color:#ffffff;
+        }
+        .container .list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            height: 200px;
+            width: 100%;
+        }
+        .container .list li {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 5px 5px 0; }
+        .container .list li img {
+            width: 100%;
+            height: 100%; }
+        .container .list li .close {
+            display: none;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 50px;
+            font-weight: 100;
+            color: #dedede;
+            transform: translate(-50%, -56%); }
+        .container .list li .close:hover {
+            color: #fff; }
+        .container .list li.file {
+            width: 60px;
+            height: 60px;
+            border: 1px dashed #ccc; }
+        .container .list li.file input {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer; }
+        .container .list li.file::before {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            content: "+";
+            font-size: 50px;
+            font-weight: 100;
+            color: #dedede;
+            transform: translate(-50%, -56%); }
+        .container .list li.file:hover {
+            border-color: #5192fe; }
+        .container .list li:not(:last-child)::before {
+            display: none;
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); }
+        .container .list li:not(:last-child):hover::before {
+            display: block; }
+        .container .list li:not(:last-child):hover .close {
+            display: block; }
+        /*=================================================================*/
+        .container .list2 {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            height: 80px;
+            width: 100%;
+        }
+        .container .list2 li {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 5px 5px 0; }
+        .container .list2 li img {
+            width: 100%;
+            height: 100%; }
+        .container .list2 li .close {
+            display: none;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 50px;
+            font-weight: 100;
+            color: #dedede;
+            transform: translate(-50%, -56%); }
+        .container .list2 li .close:hover {
+            color: #fff; }
+        .container .list2 li.file2 {
+            width: 60px;
+            height: 60px;
+            border: 1px dashed #ccc; }
+        .container .list2 li.file2 input {
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer; }
+        .container .list2 li.file2::before {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            content: "+";
+            font-size: 50px;
+            font-weight: 100;
+            color: #dedede;
+            transform: translate(-50%, -56%); }
+        .container .list2 li.file2:hover {
+            border-color: #5192fe; }
+        .container .list2 li:not(:last-child)::before {
+            display: none;
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); }
+        .container .list2 li:not(:last-child):hover::before {
+            display: block; }
+        .container .list2 li:not(:last-child):hover .close {
+            display: block; }
+    /*===============================================================*/
+    </style>
+    <script>
+        window.onload = function () {
+            //需求：鼠标放到上面的li上，li本身变色(添加类)，对应的span也显示出来(添加类);
+            //思路：1.点亮上面的盒子。   2.利用索引值显示下面的盒子。
+            var liArr = document.getElementsByClassName("tab");
+            var spanArr = document.getElementsByClassName("tabitem");
+            for(var i=0;i<liArr.length;i++){
+                //绑定索引值（新增一个自定义属性：index属性）
+                liArr[i].index = i;
+                liArr[i].onmouseover = function () {
+                    //1.点亮上面的盒子。   2.利用索引值显示下面的盒子。(排他思想)
+                    for(var j=0;j<liArr.length;j++){
+                        liArr[j].className = "tab";
+                        spanArr[j].style.display="none";
+                    }
+                    this.className = "current tab";
+                    spanArr[this.index].style.display = "block"; //【重要代码】
+                }
+            }
+        }
+    </script>
+    <script>
+        window.addEventListener("load", () => {
+            // 先获取一下上传的这个图标元素
+            let uploadFile = document.querySelector("#file");
+            let uploadFile2 = document.querySelector("#rfile");
+            // 在获取一下整个list和file这个框框
+            let list = document.querySelector(".list");
+            let list2 = document.querySelector(".list2");
+            let file = document.querySelector(".file");
+            let file2 = document.querySelector(".file2");
+            // 为这个按钮添加change事件 当你选中图片然后点击确定时触发
+            uploadFile.addEventListener("change", function () {
+                for (let item of this.files) {
+                    // 利用正则表达式判断是否是图片类型;
+                    if (!/image\/\w+/.test(item.type)) {
+                        alert("只能选择图片");
+                        return;
+                    }
+                    // 创建一个FileReader()对象
+                    let reader = new FileReader();
+                    // readAsDataURL方法可以将上传的图片格式转为base64,然后在存入到图片路径,这样就可以上传任意位置的图片
+                    reader.readAsDataURL(item);
+                    reader.addEventListener("load", function () {
+                        // reader.result得到的是转换后的图片base64格式直接放到src路径即可
+                        let li = document.createElement("li");
+                        li.innerHTML = `
+				<div class="close">×</div>
+				<img src="/file/${item.name}"
+					 />
+				`;
+                        list.insertBefore(li, file);
+                    });
+                }
+            });
+            // ok  现在做删除功能 因为每次添加新的li元素都会重绘dom树 没法给每个.close元素绑定事件 这里我们就用事件委托实现
+            list.addEventListener("click", (e) => {
+                // e是页面一开启就自动生成的事件对象
+                // e.target是触发事件的对象 ndoeName是每一个dom元素都有节点 且值全部都是大写
+                // 这里就是如果点击的是×号就删除 否则不删除
+                if (e.target.nodeName == "DIV") {
+                    // removeChild是移除子元素 括号写的是点击的div对应的父元素就是某一个li了
+                    list.removeChild(e.target.parentNode);
+                }
+            });
+            // 到此 功能实现 第一次写js视频 有点不太会的亚子 不会的私信或者评论哈,感谢支持 我继续努力 一起加油
+            // 为这个按钮添加change事件 当你选中图片然后点击确定时触发
+            uploadFile2.addEventListener("change", function () {
+                for (let item of this.files) {
+                    // 利用正则表达式判断是否是图片类型;
+                    if (!/image\/\w+/.test(item.type)) {
+                        alert("只能选择图片");
+                        return;
+                    }
+                    // 创建一个FileReader()对象
+                    let reader = new FileReader();
+                    // readAsDataURL方法可以将上传的图片格式转为base64,然后在存入到图片路径,这样就可以上传任意位置的图片
+                    reader.readAsDataURL(item);
+                    reader.addEventListener("load", function () {
+                        // reader.result得到的是转换后的图片base64格式直接放到src路径即可
+                        let li = document.createElement("li");
+                        li.innerHTML = `
+				<div class="close">×</div>
+				<img src="/file/${item.name}"
+					 />
+				`;
+                        list2.insertBefore(li, file2);
+                    });
+                }
+            });
+            // ok  现在做删除功能 因为每次添加新的li元素都会重绘dom树 没法给每个.close元素绑定事件 这里我们就用事件委托实现
+            list2.addEventListener("click", (e) => {
+                // e是页面一开启就自动生成的事件对象
+                // e.target是触发事件的对象 ndoeName是每一个dom元素都有节点 且值全部都是大写
+                // 这里就是如果点击的是×号就删除 否则不删除
+                if (e.target.nodeName == "DIV") {
+                    // removeChild是移除子元素 括号写的是点击的div对应的父元素就是某一个li了
+                    list2.removeChild(e.target.parentNode);
+                }
+            });
+            // 到此 功能实现 第一次写js视频 有点不太会的亚子 不会的私信或者评论哈,感谢支持 我继续努力 一起加油
+        });
+        function fuzhi(){
+            let file = document.getElementById("pic");
+            let list = document.querySelector(".list");
+            var pic="";
+            for(let item of list.getElementsByTagName("img")){
+                pic=pic+item.src.substring(21)+"#";
+            }
+            file.value=pic;
+        }
+        function rfuzhi(){
+            let file = document.getElementById("rpic");
+            let list2 = document.querySelector(".list2");
+            var pic="";
+            for(let item of list2.getElementsByTagName("img")){
+                pic=item.src.substring(27);
+            }
+            file.value=pic;
+        }
+    </script>
+</head>
+<body>
+<div class="dowebok" id="dowebok">
+    <div class="form-container sign-up-container" id="app2">
+        <div>
+            <div  class="current tab">普通用户</div>
+            <div  class="tab">救助机构</div>
+        </div>
+        <form class="show tabitem">
+            <input type="text" placeholder="手机号码" v-model="regular.tele" v-on:blur="teleyan1">
+            <div>
+            <span id="teleyansp1"></span>
+            </div>
+            <input type="password" placeholder="密码" v-model="regular.password">
+            <select v-model="regular.sex">
+                <option value ="男">男</option>
+                <option value ="女">女</option>
+            </select>
+            <input type="text" placeholder="年龄" v-model="regular.age">
+            <input type="text" placeholder="住址" v-model="regular.address">
+            <input type="text" placeholder="昵称" v-model="regular.username">
+            <div>
+            <label style="font-size: 6px">*请上传头像</label>
+            </div>
+            <div class="container">
+                <ul class="list2">
+                    <li class="file2">
+                        <!-- multiple这个属性可以实现文件选择框的多选 -->
+                        <input type="file"  id="rfile" multiple />
+                        <input type="hidden" id="rpic">
+                    </li>
+                </ul>
+            </div>
+            <button style="color: #fff;" v-on:click="zhuce1" type="button">注册</button>
+        </form>
+        <form  class="tabitem" style="display: none">
+            <input type="text" placeholder="手机号码" v-model="organization.tele" v-on:blur="teleyan2">
+            <span id="teleyansp2"></span>
+            <input type="password" placeholder="密码" v-model="organization.password">
+            <input type="text" placeholder="地址" v-model="organization.address">
+            <input type="text" placeholder="昵称" v-model="organization.username">
+            <label style="font-size: 6px">*请上传营业执照等相关资质证明照片，方便后续审核</label>
+            <div class="container">
+                <ul class="list">
+                    <li class="file">
+                        <!-- multiple这个属性可以实现文件选择框的多选 -->
+                        <input type="file"  id="file" multiple />
+                        <input type="hidden" id="pic">
+                    </li>
+                </ul>
+            </div>
+            <button style="color: #fff;" v-on:click="zhuce2" type="button">注册</button>
+        </form>
+    </div>
+
+    <div class="form-container sign-in-container" id="denglu">
+        <form method="post">
+            <h1>登录</h1>
+            <select v-model="status">
+                <option value ='1'>管理员</option>
+                <option value ='2'>用户</option>
+                <option value='3'>救助机构</option>
+            </select>
+            <input type="text" placeholder="手机号码"  id="telegeshi" v-on:blur="geshiyanzheng" v-model="tele">
+            <div style=" width: 284px;">
+            <span id="geshitishi"></span>
+            </div>
+            <input type="password" placeholder="密码" v-model="password">
+            <button style="color: #fff;" v-on:click="denglu" type="button">登录</button>
+        </form>
+    </div>
+
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>已有帐号？</h1>
+                <p>请使用您的帐号进行登录</p>
+                <button class="ghost" id="signIn">登录</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>没有帐号？</h1>
+                <p>立即注册加入我们，和我们一起开始旅程吧</p>
+                <button class="ghost" id="signUp">注册</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var signUpButton = document.getElementById('signUp')
+    var signInButton = document.getElementById('signIn')
+    var container = document.getElementById('dowebok')
+
+    signUpButton.addEventListener('click', function() {
+        container.classList.add('right-panel-active')
+    })
+
+    signInButton.addEventListener('click', function() {
+        container.classList.remove('right-panel-active')
+    })
+</script>
+<script>
+   const va=new Vue({
+       el:"#denglu",
+       methods: {
+       denglu(){
+           var _this=this;
+           axios({
+               methods:"post",
+               url:"http://localhost:9090/web-demo/loginandregi/login?tele="+_this.tele+"&password="+_this.password+"&status="+_this.status
+           }).then(function (resp)
+           {
+               if(resp.data=="success")
+               {
+                   window.alert("登录成功！");
+                   window.location.href="index.html"
+               }
+               else if(resp.data=="success1")
+               {
+                   window.location.href="http://localhost:8080/admin"
+               }
+               else if(resp.data=="fengjin")
+               {
+                   window.alert("您的账号已被封禁！如果是刚申请救助机构账号，请耐心等待管理员审核！否则您存在违规行为！如有需要，请联系客服电话0312-666666进行处理!");
+               }
+               else
+               {
+                   window.alert("用户名或密码错误！");
+               }
+           })
+       },
+       geshiyanzheng(){
+           var patt = /^[1][3-9][\d]{9}/
+           if (patt.test(this.tele)) {
+               $("#geshitishi").html("手机号格式正确");
+               $("#geshitishi").css("color","green");
+           } else{
+               $("#geshitishi").html("手机格式不正确！");
+               $("#geshitishi").css("color","red");
+           }
+       }
+       },
+       data(){
+           return {
+               status:'',
+               tele:"",
+               password:""
+           }
+       }
+   })
+   const vb=new Vue({
+       el:"#app2",
+       methods: {
+           zhuce1(){
+               this.regular.num=0;
+               this.regular.status=2;
+               rfuzhi();
+               this.regular.pic=$("#rpic").val();
+               var _this=this;
+               console.log(_this.regular)
+               axios({
+                   method: "post",
+                   url: "http://localhost:9090/web-demo/loginandregi/radd",
+                   data: _this.regular
+               }).then(function (resp) {
+                 if(resp.data=="success")
+                 {
+                     window.alert("注册成功！可以登录！")
+                 }
+                 else
+                 {
+                     window.alert("注册失败！用户已存在！")
+                 }
+               })
+           },
+           zhuce2(){
+               this.organization.status=4;
+               fuzhi();
+               this.organization.pic=$("#pic").val();
+               var _this=this;
+               console.log(_this.organization)
+               axios({
+                   method: "post",
+                   url: "http://localhost:9090/web-demo/loginandregi/oadd",
+                   data: _this.organization
+               }).then(function (resp) {
+                   if(resp.data=="success")
+                   {
+                       window.alert("注册成功！请耐心等待管理员审核！")
+                   }
+                   else
+                   {
+                       window.alert("注册失败！用户已存在！")
+                   }
+               })
+           },
+           teleyan1(){
+               var patt = /^[1][3-9][\d]{9}/
+               if (patt.test(this.regular.tele)) {
+                   $("#teleyansp1").html("手机号格式正确");
+                   $("#teleyansp1").css("color","green");
+               } else{
+                   $("#teleyansp1").html("手机格式不正确！");
+                   $("#teleyansp1").css("color","red");
+               }
+           },
+           teleyan2(){
+               var patt = /^[1][3-9][\d]{9}/
+               if (patt.test(this.organization.tele)) {
+                   $("#teleyansp2").html("手机号格式正确");
+                   $("#teleyansp2").css("color","green");
+               } else{
+                   $("#teleyansp2").html("手机格式不正确！");
+                   $("#teleyansp2").css("color","red");
+               }
+           }
+       },
+       data(){
+           return {
+               //用户对象
+               regular:{
+                   tele:"",
+                   password:"",
+                   sex:"",
+                   age:'',
+                   address:"",
+                   pic:"",
+                   num:'',
+                   status:'',
+                   username:""
+               },
+               //机构对象
+               organization:{
+                   tele:"",
+                   password:"",
+                   address:"",
+                   username:"",
+                   status:'',
+                   pic:"",
+               }
+           }
+       }
+   })
+</script>
+
+</body>
+</html>

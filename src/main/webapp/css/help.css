@@ -1,0 +1,140 @@
+.w{
+    background-color: rgb(242, 242, 242);
+    width: 100%;
+}
+.left{
+    width: 18%;
+    background-color: #ffffff;
+    border-radius: 5px;
+    float: left;
+    margin-left: 38px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.left div{
+    margin: 0 auto;
+    padding: 10px 10px 10px 10px;
+}
+.left input{
+    outline: 1px solid burlywood;
+    display: inline-block;
+    width: 80%;
+}
+.left button{
+    background-color: burlywood;
+    display: inline-block;
+    width: 100px;
+    color: #FFFFFF;
+    text-align: center;
+}
+.middle{
+    width:53%;
+    background-color: #ffffff;
+    border-radius: 5px;
+    float: left;
+    margin-left: 38px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.middle .neirong ul li{
+    border-bottom: 3px solid #eeeeee;
+    height: 200px;
+}
+.middle ul li img{
+    display: inline-block;
+    width: 30%;
+    height: 160px;
+    margin-top: 20px;
+    margin-left: 10px;
+    vertical-align: top;
+}
+.right{
+    width:18%;
+    float: left;
+    margin-left: 38px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.middler{
+    width: 65%;
+    height: 160px;
+    display: inline-block;
+    margin-top: 20px;
+    margin-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.tele{
+   margin-left: 7px;
+}
+.middler .tele span{
+    display: inline-block;
+    height: 36px;
+    line-height: 36px;
+}
+.middle .desc p{
+    margin-left: 10px;
+    margin-top: 5px;
+}
+.middle .desc p i{
+    font-size: 12px;
+}
+.middler .xinxi{
+    margin-left: 10px;
+    position: absolute;
+    bottom: 5px;
+}
+.middler .xinxi i{
+    font-size: 12px;
+}
+.middler .xinxi span{
+    font-size: 12px;
+}
+
+.yema{
+    height: 60px;
+  }
+.paihang{
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 95%;
+    border-radius: 5px;
+    margin: 0 auto;
+    background-color: burlywood;
+    height: 385px;
+    font-size: 14px;
+    color: rgb(143, 8, 8);
+}
+.paihang:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+.paihang img{
+    margin-left: 15px;
+    vertical-align:text-bottom;
+    /* 与文字底部对齐 */
+    display:inline-block ;
+    height: 20px;
+    width: 20px;
+}
+.pcard{
+    width: 98%;
+    border-radius: 2px;
+    margin:0 auto;
+    background-color: #fff;
+    height: 360px;
+}
+.pcard ul li{
+    border-bottom: 2px solid #e5e7eb;
+    padding: 6px 0 7px 0;
+    color: #000;
+}
+.pcardr{
+    float: right;
+    margin-right: 5px;
+}

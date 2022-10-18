@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流浪猫狗救助平台</title>
+    <!-- css files -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/article.css">
+    <link rel="stylesheet" href="css/pagination.css">
+	<!-- Style-CSS -->
+    <script src="js/article.js"></script>
+    <script src="js/prototype.js"></script>
+    <script src="js/pagination.js"></script>
+    <script src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/include.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+</head>
+<body>
+    <!-- 导航栏出现 -->
+   <div id="header"></div>
+    <!-- 导航栏结束 -->
+      <div class="w clearfix">
+          <div id="app1">
+      <div class="left">
+          <div>
+              <span>发布日期</span>
+              <input type="date" v-model="news2.newsDate">
+          </div>
+          <div>
+              <span>新闻标题</span>
+              <input type="text" v-model="news2.newsTitle">
+          </div>
+          <div>
+              <button v-on:click="newsonsubmit1">点击筛选</button>
+          </div>
+       </div>
+      <div class="middle">
+       <div class="lun">
+        <div id="focusImage" class="slide">
+
+            <ul class="contents">
+                <li class="current">
+                    <div class="image"><a href="#">
+                        <video width="400" height="282" controls>
+                        <source src="video/2.mp4"  type="video/mp4">
+                        </video></a></div>
+                    <div class="text">
+                        <span class="title"><a href="#">保护流浪猫狗公益广告</a></span>
+                        <p>给流浪动物更多公益广告支持，宣传领养方式、渠道，整合信息、资源，鼓励更多社会力量举办线下领养活动等，让更多爱心人士了解流浪动物救助问题，也给更多萌宠找到温馨的家。</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="image"><a href="#"><video width="400" height="282" controls>
+                        <source src="video/2.mp4"  type="video/mp4">
+                    </video></a></div>
+                    <div class="text">
+                        <span class="title"><a href="#">救助流浪动物，不是一件有趣的事情。</a></span>
+                        <p>首先，要有颗强大的心；其次，要很有经验，能够看得懂它们的情况，听得到它们的叫声。 最后，要做好思想准备。一个善念，一把援手，一口粮食一口水，对这条生命来说，都在乎。 请为一个微不足道的生命，在乎一次。</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="image"><a href="#"><video width="400" height="282" controls>
+                        <source src="video/2.mp4"  type="video/mp4">
+                    </video></a></div>
+                    <div class="text">
+                        <span class="title"><a href="#">决不放弃救助它们</a></span>
+                        <p>流浪不是它们的错，是人做错了事，人有选择，而它们没有。请所有的主人保护好你的狗狗，不要轻易的丢弃变卖它们。请不要置这一条条无辜的生命与万劫不复。它们忠诚无比，值得像家人一般被善待。</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="image"><a href="#"><video width="400" height="282" controls>
+                        <source src="video/2.mp4"  type="video/mp4">
+                    </video></a></div>
+                    <div class="text">
+                        <span class="title"><a href="#">救助团体坚持推行绝育科学救助方法</a></span>
+                        <p>目前我国流浪动物救助社会团体都坚持推行给流浪动物绝育的科学救助方法。在他们看来，除了增强养宠人士对宠物的责任意识，控制流浪动物数量增长的最好办法就是绝育，而且绝育后的动物不仅患病几率减少，性情也更温顺。</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="image"><a href="#"><video width="400" height="282" controls>
+                        <source src="video/2.mp4"  type="video/mp4">
+                    </video></a> </div>
+                    <div class="text">
+                        <span class="title"><a href="#">流浪猫狗四处游走终成患</a></span>
+                        <p>由于有些人习惯散养宠物，导致宠物被一些不法分子抓去贩卖，如果卖不出去，那很可能就会被遗弃，在一定程度上造成流浪动物的数量增加。此外，无序繁殖也直接导致流浪动物的数量越来越多。</p>
+                    </div>
+                </li>
+            </ul>
+        
+            <div class="icon-dot">
+                <a href="javascript:;" class="cur current"></a>
+                <a href="javascript:;"></a>
+                <a href="javascript:;"></a>
+                <a href="javascript:;"></a>
+                <a href="javascript:;"></a>
+            </div>
+            
+            <span class="link-watch pre down"></span>
+            <span class="link-watch next down"></span>
+            
+        </div>
+       </div>
+      <div class="mtop clearfix">
+          <div class="mtopl">
+          <p>猫狗热点知识文章</p>
+          </div>
+          <div class="mtopr">
+
+          </div>
+      </div>
+        <ul>
+            <li v-for="(news,index) in newss" :key="index">
+                <img v-if="news.newsIsTop===1" src="images/置顶.png" class="zhiding">
+                 <article>
+                    <div class="img">
+                        <img :src="'/file/'+news.newsImagePath" alt="">
+                    </div>       
+                    <div class="content">
+                        <a href="newsdetails.html" v-on:click="to(news.newsID)" style="color: #666"><h1>{{news.newsTitle}}</h1></a>
+                        <span>⏱{{news.newsDate}}</span>
+                        <p>{{news.newsContent}}</p>
+                    </div>
+                 </article>  
+            </li>
+      </ul>
+      <div class="yema">
+        <div id="pages"></div>
+      </div>
+      </div>
+    <div class="right">
+       <div class="paihang" style="height:auto;">
+           <img src="images/热销-火焰.png" alt="">
+           <span>按热度排行前十文章</span>
+           <div class="pcard" style="height:auto;">
+             <ul>
+                 <li v-for="(xinwens,index) in xinwen" :key="index">
+                     <a href="newsdetails.html" v-on:click="to(xinwens.newsID)" style="color: black">{{xinwens.newsTitle}}</a>
+                 <div class="pcardr" style="background-color: #e54529;width: 20px;text-align: center;color: #FFFFFF" v-if="xinwens.newsRedu>1">
+                    <span>沸</span>
+                 </div>
+                     <div class="pcardr" style="background-color:orange;width: 20px;text-align: center;color: #FFFFFF" v-else>
+                         <span>热</span>
+                     </div>
+                 </li>
+             </ul>
+           </div>
+       </div>
+    </div>
+          </div>
+    </div>
+
+
+
+
+    <!-- 网页底部 -->
+    <div id="footer"></div>
+    <!-- //网页底部 -->
+
+
+    <script>
+        const vb=new Vue({
+            el: "#app1",
+            mounted(){
+                this.newsonsubmit();
+                this.topten();
+            },
+            methods: {
+                //==================文章管理方法========================
+                newssubmit(index){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/news/selectByPageAndCondition?currentPage="+index+"&pageSize="+5,
+                        data:_this.news2
+                    }).then(function (resp){
+                        _this.newss=resp.data.rows;
+                        _this.newss.forEach((item)=>{
+                            var wz=item.newsImagePath.indexOf('#');
+                            item.newsImagePath=item.newsImagePath.substring(0,wz);
+                        })
+                    })
+                },
+                newsonsubmit(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/news/selectByPageAndCondition?currentPage="+1+"&pageSize="+5,
+                        data:_this.news1
+                    }).then(function (resp){
+                        _this.newss=resp.data.rows;
+                        _this.total=resp.data.totalCount;
+                        new Pagination({
+                            element: '#pages',
+                            type: 1,
+                            pageIndex: 1,
+                            pageSize: 5,
+                            pageCount: 5,
+                            total:_this.total,
+                            jumper: true,
+                            singlePageHide: false,
+                            prevText: '上一页',
+                            nextText: '下一页',
+                            disabled: true,
+                            currentChange: function(index) {
+                                vb.newssubmit(index);
+                            }
+                        });
+                        _this.newss.forEach((item)=>{
+                            var wz=item.newsImagePath.indexOf('#');
+                            item.newsImagePath=item.newsImagePath.substring(0,wz);
+                        })
+                    })
+                },
+                newsonsubmit1(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/news/selectByPageAndCondition?currentPage="+1+"&pageSize="+5,
+                        data:_this.news2
+                    }).then(function (resp){
+                        _this.newss=resp.data.rows;
+                        _this.total=resp.data.totalCount;
+                        new Pagination({
+                            element: '#pages',
+                            type: 1,
+                            pageIndex: 1,
+                            pageSize: 5,
+                            pageCount: 5,
+                            total:_this.total,
+                            jumper: true,
+                            singlePageHide: false,
+                            prevText: '上一页',
+                            nextText: '下一页',
+                            disabled: true,
+                            currentChange: function(index) {
+                                vb.newssubmit(index);
+                            }
+                        });
+                        _this.newss.forEach((item)=>{
+                            var wz=item.newsImagePath.indexOf('#');
+                            item.newsImagePath=item.newsImagePath.substring(0,wz);
+                        })
+                    })
+                },
+                to(id){
+                    window.open('newsdetails.html?newsID='+id);
+                },
+                topten(){
+                    var _this =this;
+                    //页面加载完成之后，发送异步数据请求，查询数据
+                    axios({method:"post",
+                        url:"http://localhost:9090/web-demo/news/topten"
+                    }).then(function (resp){
+                    console.log(resp.data)
+                        _this.xinwen=resp.data;
+                    console.log(_this.xinwen)
+                    })
+                }
+                //==================!!!文章管理方法========================
+            },
+            data() {
+                return {
+                    //===============文章管理部分需要的=============================
+                    //添加图片是用来存放图片文件的数组
+                    news1:{
+                        newsID:'',
+                        newsTitle:"",
+                        newsContent:"",
+                        newsDate:"",
+                        newsImagePath:"",
+                        newsIsTop:'',
+                        newsZan:'',
+                        newsRedu:''
+                    },
+                    news2:{
+                        newsID:'',
+                        newsTitle:"",
+                        newsContent:"",
+                        newsDate:"",
+                        newsImagePath:"",
+                        newsIsTop:'',
+                        newsZan:'',
+                        newsRedu:''
+                    },
+                    newss:[],
+                    xinwen:[],
+                    total:''
+                    //===============!!!文章管理部分需要的=============================
+                }
+            }
+        })
+    </script>
+
+
+    <!-- 新闻列表页小轮播图js代码 -->
+     <script>
+new ImageSlide({
+	project:"#focusImage",
+	content:".contents li",
+	dot:".icon-dot a",
+	watch:".link-watch",
+	auto:!0,
+	hide:!0
+})
+     </script>
+     <!-- //新闻列表页小轮播图js代码 -->
+
+
+
+	
+
+
+    <!-- smoothscroll -->
+	<script src="js/SmoothScroll.min.js"></script>
+	<!-- //smoothscroll -->
+
+	<!-- start-smooth-scrolling -->
+	<script src="js/easing.js"></script>
+	<script>
+		jQuery(document).ready(function ($) {
+			$(".scroll").click(function (event) {
+				event.preventDefault();
+
+				$('html,body').animate({
+					scrollTop: $(this.hash).offset().top
+				}, 1000);
+			});
+		});
+	</script>
+	<!-- //end-smooth-scrolling -->
+
+
+
+    <!-- js -->
+	<script src="js/jquery-2.2.3.min.js"></script>
+	<!-- Necessary-JavaScript-File-For-Bootstrap -->
+	<!-- //js -->
+
+	
+
+    <!-- 导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+    <script>
+		$(window).scroll(function () {
+			if ($(window).scrollTop() >= 400) {
+				$('nav').addClass('fixed-header');
+			} else {
+				$('nav').removeClass('fixed-header');
+			}
+		});
+
+		/* scrollTop() >= 795
+		   Should be equal the the height of the header
+		 */
+	</script>
+    <!-- //导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+
+</body>
+</html>

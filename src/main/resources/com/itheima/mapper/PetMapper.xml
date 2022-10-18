@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.itheima.mapper.PetMapper">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+
+    <resultMap id="petResultMap" type="pet">
+        <result property="petName" column="petName" />
+        <result property="petType" column="petType" />
+        <result property="petIsApply" column="petIsApply" />
+        <result property="petAddress" column="petAddress" />
+    </resultMap>
+
+    <delete id="deleteByids">
+        delete  from pet where petID in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectByPageAndCondition" resultMap="petResultMap">
+      select *
+      from pet
+<where>
+    <if test="pet.petName !=null and pet.petName!=''">
+        and petName like #{pet.petName}
+    </if>
+    <if test="pet.petType !=null and pet.petType!=''">
+        and petType like #{pet.petType}
+    </if>
+    <if test="pet.petAddress !=null and pet.petAddress!=''">
+        and petAddress like #{pet.petAddress}
+    </if>
+    and petIsApply="未领养"
+</where>
+limit #{begin},#{size}
+    </select>
+
+    <select id="selectTotalCountByCondition" resultType="java.lang.Integer" >
+select count(*)
+from  pet
+        <where>
+        <if test="petName !=null and petName!=''">
+            and petName like #{petName}
+        </if>
+
+        <if test="petType !=null and petType!=''">
+            and petType like #{petType}
+        </if>
+        <if test="petAddress !=null and petAddress!=''">
+            and petAddress like #{petAddress}
+        </if>
+            and petIsApply="未领养"
+        </where>
+    </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

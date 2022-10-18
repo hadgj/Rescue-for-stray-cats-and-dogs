@@ -1,0 +1,257 @@
+.w{
+    background-color: rgb(242, 242, 242);
+    width: 100%;
+    padding: 20px 0;
+}
+.middle{
+    width: 70%;
+    border-radius: 5px;
+    background-color: #ffffff;
+    margin: 0 auto;
+}
+.bottom{
+    width: 70%;
+    border-radius: 5px;
+    background-color: #ffffff;
+    margin: 0 auto;
+}
+.middleh{
+    height: 45px;
+    line-height: 45px;
+    font-size: 18px;
+    padding-left: 5px;
+    color: black;
+    border-bottom: 3px solid rgb(222, 184, 135);
+}
+.middleb{
+    padding-left: 120px;
+    margin-top: 20px;
+}
+.middlec{
+    margin-top: 20px;
+}
+.middlec .title{
+    padding-left: 120px;
+    color: black;
+    font-size: 22px;
+}
+.middlec  .time{
+  width: 73%;
+  margin: 10px auto;
+  font-size: 18px;
+  height: 30px;
+  line-height: 30px;
+}
+.middlec img{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin-bottom: 6px;
+}
+.middlec  .wenzi{
+    text-indent: 30px;
+    padding: 30px;
+    font-size: 18px;
+}
+.box{
+    width: 670px;height: 400px;overflow: hidden;position: relative;}
+  .box-1 ul{}
+  .box-1 ul li{width: 670px;height: 400px;position: relative;overflow: hidden;}
+  .box-1 ul li img{display:block;width: 670px; height: 400px;}
+  .box-1 ul li h2{position: absolute;left: 0;bottom: 0;height: 40px;background: rgba(125,125,120,.4);text-indent: 2em;
+                  padding-right:500px ;font-size: 15px;line-height: 40px;text-overflow: ellipsis;overflow: hidden;
+                  white-space: nowrap;font-weight: normal;color: ghostwhite}
+  .box-2{position: absolute;right: 10px;bottom: 14px;}
+  .box-2 ul li{float:left;width: 12px;height: 12px;overflow: hidden; margin: 0 5px; border-radius: 50%;
+                  background: rgba(0,0,0,0.5);text-indent: 100px;cursor: pointer;}
+  .box-2 ul .on{background: rgba(255,255,255,0.6);}
+  .box-3 span{position: absolute;color: white;background: rgba(125,125,120,.3);width: 50px;height: 80px;
+                  top:50%; font-family: "宋体";line-height: 80px;font-size:60px;margin-top: -40px;
+                  text-align: center;cursor: pointer;}
+  .box-3 .prev{left: 1px;}
+  .box-3 .next{right: 1px;}
+  .box-3 span::selection{background: transparent;}
+  .box-3 span:hover{background: rgba(125,125,120,.8);}
+  .firstp {
+    /* 文字排版：颜色、字号、字体、粗体、斜体、下划线、删除线 */
+    color: #666;  /*颜色*/
+    font-size: 30px; /*字号*/
+    font-family: "宋体"; /*字体*/
+    font-weight: bold; /*粗体*/
+    font-style: italic; /*斜体*/
+    text-decoration: underline; /*下划线  删除线用：line-through*/
+
+    /* 段落排版：缩进、行高、文字距离、单词间距、对齐 */
+    text-indent: 2em; /* 缩进 */
+    line-height: 1.5em; /* 行高 */
+    letter-spacing: 5px; /* 中文字距离 || 字母间距 */
+    word-spacing: 50px; /* 单词间距 */
+    text-align: center; /* 对齐：居中：center、左对齐：left、右对齐：right */
+
+}
+#qq {
+    width: 600px;
+    /*宽*/
+    height: 170px;
+    /*高*/
+    background: #fff;
+    /*背景颜色*/
+    margin: 50px auto 30px;
+    border-radius: 5px;
+    /*Html5 圆角*/
+}
+
+#qq p {
+    font-size: 12px;
+    color: #666;
+    font-family: "微软雅黑";
+    line-height: 45px;
+    text-indent: 20px;
+}
+
+#qq .message {
+    width: 560px;
+    height: 70px;
+    margin: 0 auto;
+    overflow: hidden;
+    outline: none;
+    border: 1px solid #ddd;
+    padding: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #778899 0%, #333 100%);
+    /*粗细 风格 颜色*/
+}
+
+#qq .But {
+    width: 560px;
+    height: 35px;
+    margin: 15px auto 0px;
+    position: relative;
+    /*相对，参考对象*/
+}
+
+#qq .But img.bq {
+    float: left;
+    /*左浮动*/
+}
+
+#qq .But span.submit {
+    width: 80px;
+    height: 30px;
+    background: #ff8140;
+    display: block;
+    float: right;
+    /*右浮动*/
+    line-height: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    /*手指*/
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    font-family: "微软雅黑";
+}
+
+/*face begin*/
+#qq .But .face {
+    width: 440px;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 12px #666;
+    position: absolute;
+    /*绝对定位*/
+    top: 21px;
+    left: 15px;
+    display: none;
+    /*隐藏*/
+}
+
+#qq .But .face ul {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+#qq .But .face ul li {
+    width: 30px;
+    height: 30px;
+    list-style-type: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*msgCon begin*/
+.msgCon {
+    width: 600px;
+    margin: 0px auto;
+    margin-bottom: 60px;
+}
+
+.msgCon .msgBox {
+    background: #fff;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-top: 16px;
+    border-radius: 4px;
+}
+
+.msgCon .msgBox .headUrl {
+    width: 100%;
+    height: 60px;
+    border-bottom: 1px dotted #ddd;
+    display: flex;
+    align-items: center;
+}
+
+.msgCon .msgBox .headUrl img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%
+}
+
+.msgCon .msgBox .headUrl div {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
+    font-size: 16px;
+    margin-left: 16px;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to top, #b224ef 0%, #7579ff 100%);
+}
+
+.msgCon .msgBox .headUrl div .time {
+    font-size: 14px;
+    margin-top: 6px;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #74ebd5 0%, #9face6 100%);
+}
+
+.msgCon .msgBox .headUrl a {
+    font-size: 14px;
+    padding: 10px;
+    color: salmon;
+    cursor: pointer;
+}
+
+.msgCon .msgBox .msgTxt {
+    font-size: 14px;
+    color: #666;
+    min-height: 40px;
+    line-height: 24px;
+    padding: 10px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, #778899 0%, #333 100%);
+}

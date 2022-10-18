@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- css files -->
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="js/include.js"></script>
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/vue.js"></script>
+    <script src="js/axios-0.18.0.js"></script>
+    <!-- Style-CSS -->
+    <style>
+
+        .zhuti{
+            width: 70%;
+            min-height: 100vh;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: rgb(241,227,189);
+        }
+        .banner{
+            width: 500px;
+            height: 80px;
+            background:url("images/猫狗banner.jpg") no-repeat;
+            background-size: 100% 100%;
+            margin: 10px auto;
+            text-align: center;
+            line-height: 100px;
+        }
+        .lanmu{
+            margin: 10px auto;
+        }
+        .content{
+            width: 70%;
+            margin: 5px auto;
+            font-size: 25px;
+            color: black;
+            text-indent:2em;
+        }
+    </style>
+</head>
+<body>
+<!-- 导航栏出现 -->
+<div id="header"></div>
+<!-- 导航栏结束 -->
+
+
+
+
+
+<div class="zhuti" id="one">
+    <div class="lanmu" v-for="(item,index) in lanmuliitems">
+        <h1 class="banner">{{'0'+(index+1)+'.'+item.itemname}}</h1>
+        <div class="content">
+        <p>{{item.itemansw}}</p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- 网页底部 -->
+<div id="footer"></div>
+<!-- //网页底部 -->
+<!--新建vue对象控制tab1-->
+<script>
+    var product_id = oneValue();
+    //接收单个值
+    function oneValue(){
+        var result;
+        var url = window.location.search;//获取url中“？”后面的字符串
+        if(url.length != -1){
+            result = url.substr(url.indexOf("=")+1);
+            console.info("result:" + result);//按浏览器F12，打印出来
+        }
+        return result;
+    }
+    const va=new Vue({
+        el:"#one",
+        mounted(){
+        this.submit();
+        },
+        methods: {
+        submit(){
+            var _this=this;
+            axios({
+                method: "post",
+                url: "http://localhost:9090/web-demo/LanmuliitemServlet/selectByParentid?parentid="+product_id
+            }).then(function (resp) {
+                _this.lanmuliitems=resp.data;
+            })
+
+        }
+        },
+        data(){
+            return{
+            lanmuliitems:[]
+                //================================================
+            }
+        }
+    })
+</script>
+<!--//新建vue对象控制tab1-->
+
+
+
+<!-- 导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+<script>
+    $(window).scroll(function () {
+        if ($(window).scrollTop() >= 400) {
+            $('nav').addClass('fixed-header');
+        } else {
+            $('nav').removeClass('fixed-header');
+        }
+    });
+
+    /* scrollTop() >= 795
+       Should be equal the the height of the header
+     */
+</script>
+<!-- //导航栏大于一定位置就可以固定在顶部用到的js代码 -->
+</body>
+</html>
